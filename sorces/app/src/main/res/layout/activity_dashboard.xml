@@ -33,20 +33,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:text="Demon is running"
-            android:textColor="@color/theme_font_options"/>
+            android:text="enabled"
+            android:textColor="@color/theme_font_options"
+            android:checked="false"
+            android:id="@+id/dash_daemon_enable" />
         <ImageButton
+            android:id="@+id/dash_option_btn"
+            android:layout_margin="10dp"
+            android:padding="10dp"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/setting_btn"
-            android:background="@android:color/transparent"/>
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/setting_btn"
+            />
     </RelativeLayout>
     <RelativeLayout
         android:layout_margin="10dp"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:background="@drawable/panel_round_white"
         android:padding="10dp">
 
@@ -117,7 +121,7 @@
     <RelativeLayout
         android:layout_margin="10dp"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:background="@drawable/panel_round_white"
         android:padding="10dp">
 
@@ -184,4 +188,12 @@
             android:layout_alignStart="@+id/dash_month_sent_value"
             android:paddingLeft="10dp" />
     </RelativeLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test Connection"
+        android:id="@+id/dash_test_connection"
+        android:layout_gravity="center_horizontal" />
+
 </LinearLayout>
