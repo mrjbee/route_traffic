@@ -94,22 +94,24 @@ public class RouteTrafficApp extends ApplicationSupport<RouteTrafficModel>{
         });
     }
 
-    public String bytesToHuman(Long bytes) {
+    public String bytesToHuman(Long bytes, boolean extended) {
 
         StringBuilder builder = new StringBuilder();
         long gB =  bytes/1073741824l;
         long mB =  bytes/1048576l;
         long kB =  bytes/1024;
+
         if (gB > 0){
             builder.append(gB).append(" GB ");
         }
         if (mB > 0){
             builder.append(mB).append(" MB ");
         }
-        if (gB < 1 && kB > 0){
-            builder.append(kB).append(" KB ");
+
+        if ((gB == 0 && extended) || mB < 1){
+                builder.append(kB).append(" KB ");
         }
-        return builder.toString();
+        return builder.toString().trim();
     }
 
 

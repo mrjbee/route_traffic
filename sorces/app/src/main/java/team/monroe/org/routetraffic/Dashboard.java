@@ -65,8 +65,8 @@ public class Dashboard extends ActivitySupport<RouteTrafficApp> {
         Event.subscribeOnEvent(this, this, RouteTrafficModel.TODAY_STATISTIC_UPDATE, new Closure<Pair<Long, Long>, Void>() {
             @Override
             public Void execute(Pair<Long, Long> arg) {
-                view(R.id.dash_today_received_value, TextView.class).setText(application().bytesToHuman(arg.first));
-                view(R.id.dash_today_sent_value, TextView.class).setText(application().bytesToHuman(arg.second));
+                view(R.id.dash_today_received_value, TextView.class).setText(application().bytesToHuman(arg.first, true));
+                view(R.id.dash_today_sent_value, TextView.class).setText(application().bytesToHuman(arg.second, true));
                 return null;
             }
         });

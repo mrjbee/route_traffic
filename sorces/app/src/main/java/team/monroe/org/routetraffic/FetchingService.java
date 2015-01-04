@@ -10,9 +10,13 @@ import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.util.Pair;
 
+import org.monroe.team.android.box.Closure;
 import org.monroe.team.android.box.event.Event;
 import org.monroe.team.android.box.manager.Model;
+
+import java.util.Objects;
 
 import team.monroe.org.routetraffic.uc.FetchStatistic;
 
@@ -33,11 +37,12 @@ public class FetchingService extends Service {
     }
 
 
-    private void updateNotification(int out, int in) {
+    private void updateNotification(Long out, Long in) {
         String text = "Collecting data";
 
         if (out > 0 ){
-            text = "Sent:"+in+", Received:"+out;
+            text = "Sent:"+((RouteTrafficApp)getApplication()).bytesToHuman(in, false)+", " +
+                   "Received:"+((RouteTrafficApp)getApplication()).bytesToHuman(out, false);
         }
 
         Intent intent = new Intent(this, Dashboard.class);
@@ -95,15 +100,23 @@ public class FetchingService extends Service {
         stopSelf();
     }
 
-    private void start() {
+    Object owner = new Object();
+    private synchronized void start() {
         if (isRunning()) return;
-        int out = -1, in = -1;
+        long out = -1, in = -1;
         updateNotification(out, in);
         fetchingThread = new FetchingThread();
         fetchingThread.start();
+        Event.subscribeOnEvent(this,owner,RouteTrafficModel.TODAY_STATISTIC_UPDATE,new Closure<Pair<Long, Long>, Void>() {
+            @Override
+            public Void execute(Pair<Long, Long> arg) {
+                updateNotification(arg.first, arg.second);
+                return null;
+            }
+        });
     }
 
-    private boolean isRunning() {
+    private synchronized boolean isRunning() {
         return fetchingThread != null;
     }
 
@@ -112,6 +125,7 @@ public class FetchingService extends Service {
         if (fetchingThread != null) {
             fetchingThread.interrupt();
             fetchingThread = null;
+            Event.unSubscribeFromEvents(this,owner);
         }
     }
 
