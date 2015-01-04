@@ -15,10 +15,19 @@ import org.monroe.team.android.box.Closure;
 import org.monroe.team.android.box.event.Event;
 import org.monroe.team.android.box.manager.EventMessenger;
 import org.monroe.team.android.box.manager.SettingManager;
+import org.monroe.team.socks.broadcast.DefaultBroadcastAnnouncer;
+import org.monroe.team.socks.exception.ConnectionException;
+import org.monroe.team.socks.exception.InvalidProtocolException;
+import org.monroe.team.socks.exception.SendFailException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import team.monroe.org.routetraffic.uc.FetchStatistic;
 
 public class FetchingDaemon extends Service {
+
+    private DefaultBroadcastAnnouncer broadcastAnnouncer;
 
     public enum State{
         UNSPECIFIED,
@@ -120,11 +129,35 @@ public class FetchingDaemon extends Service {
         fetchingThread.start();
         Event.subscribeOnEvent(this, this, RouteTrafficModel.EVENT_TODAY_STATISTIC_UPDATE,new Closure<Pair<Long, Long>, Void>() {
             @Override
-            public Void execute(Pair<Long, Long> arg) {
+            public Void execute(final Pair<Long, Long> arg) {
                 updateNotification(arg.first, arg.second);
+                if (broadcastAnnouncer != null && broadcastAnnouncer.isAlive()){
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            Map<String,String> msg = new HashMap<String, String>();
+                            msg.put("app","route_traffic");
+                            msg.put("out",Long.toString(arg.first));
+                            msg.put("in",Long.toString(arg.second));
+                            try {
+                                broadcastAnnouncer.sendMessage(12399,msg);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }.start();
+
+
+                }
                 return null;
             }
         });
+
+        try {
+            broadcastAnnouncer = new DefaultBroadcastAnnouncer();
+        } catch (ConnectionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private synchronized boolean isRunning() {
@@ -138,6 +171,10 @@ public class FetchingDaemon extends Service {
             fetchingThread.interrupt();
             fetchingThread = null;
             Event.unSubscribeFromEvents(this,this);
+        }
+        if (broadcastAnnouncer != null){
+            broadcastAnnouncer.destroy();
+            broadcastAnnouncer = null;
         }
     }
 
