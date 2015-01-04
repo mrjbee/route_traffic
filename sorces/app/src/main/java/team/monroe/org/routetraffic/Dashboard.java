@@ -62,25 +62,7 @@ public class Dashboard extends ActivitySupport<RouteTrafficApp> {
                     }
             }
         });
-        Event.subscribeOnEvent(this, this, RouteTrafficModel.TODAY_STATISTIC_UPDATE, new Closure<Pair<Long, Long>, Void>() {
-            @Override
-            public Void execute(Pair<Long, Long> arg) {
-                view(R.id.dash_today_received_value, TextView.class).setText(application().bytesToHuman(arg.first, true));
-                view(R.id.dash_today_sent_value, TextView.class).setText(application().bytesToHuman(arg.second, true));
-                application().getWanMonthTraffic(new RouteTrafficApp.WanTrafficCallback() {
-                    @Override
-                    public void onDone(long out, long in,long aout, long ain) {
-                        view(R.id.dash_month_recevied_value, TextView.class).setText(application().bytesToHuman(out, true));
-                        view(R.id.dash_month_sent_value, TextView.class).setText(application().bytesToHuman(in, true));
-                        view(R.id.dash_stat_month_avarege_value, TextView.class).setText(
-                               application().bytesToHuman(aout,false)+"/"+
-                               application().bytesToHuman(ain,false)
-                        );
-                    }
-                });
-                return null;
-            }
-        });
+
         requestFetchServiceDetails();
 
         application().getWanLastMonthTraffic(new RouteTrafficApp.WanTrafficCallback() {
@@ -96,6 +78,12 @@ public class Dashboard extends ActivitySupport<RouteTrafficApp> {
                 );
             }
         });
+        FetchingDaemon.State state = application().getLastDaemonStatus();
+        updateLastState(state);
+    }
+
+    private void updateLastState(FetchingDaemon.State state) {
+        view(R.id.dash_daemon_status_value, TextView.class).setText(application().convertDaemonStatus(state));
     }
 
     private void requestFetchServiceDetails() {
@@ -115,7 +103,6 @@ public class Dashboard extends ActivitySupport<RouteTrafficApp> {
 
     @Override
     protected void onDestroy() {
-        Event.unSubscribeFromEvents(this,this);
         super.onDestroy();
     }
 
@@ -128,12 +115,40 @@ public class Dashboard extends ActivitySupport<RouteTrafficApp> {
             @Override
             public void onError(String message) {}
         });
+        Event.subscribeOnEvent(this, this, RouteTrafficModel.EVENT_TODAY_STATISTIC_UPDATE, new Closure<Pair<Long, Long>, Void>() {
+            @Override
+            public Void execute(Pair<Long, Long> arg) {
+                view(R.id.dash_today_received_value, TextView.class).setText(application().bytesToHuman(arg.first, true));
+                view(R.id.dash_today_sent_value, TextView.class).setText(application().bytesToHuman(arg.second, true));
+                application().getWanMonthTraffic(new RouteTrafficApp.WanTrafficCallback() {
+                    @Override
+                    public void onDone(long out, long in,long aout, long ain) {
+                        view(R.id.dash_month_recevied_value, TextView.class).setText(application().bytesToHuman(out, true));
+                        view(R.id.dash_month_sent_value, TextView.class).setText(application().bytesToHuman(in, true));
+                        view(R.id.dash_stat_month_avarege_value, TextView.class).setText(
+                                application().bytesToHuman(aout,false)+"/"+
+                                        application().bytesToHuman(ain,false)
+                        );
+                    }
+                });
+                return null;
+            }
+        });
+        Event.subscribeOnEvent(this, this, RouteTrafficModel.EVENT_DAEMON_LAST_STATE, new Closure<FetchingDaemon.State, Void>() {
+
+            @Override
+            public Void execute(FetchingDaemon.State arg) {
+                updateLastState(arg);
+                return null;
+            }
+        });
     }
 
 
     @Override
     protected void onPause() {
         super.onPause();
+        Event.unSubscribeFromEvents(this,this);
     }
 
     @Override

@@ -7,7 +7,9 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Pair;
 
+import org.monroe.team.android.box.event.Event;
 import org.monroe.team.android.box.manager.Model;
+import org.monroe.team.android.box.manager.SettingManager;
 import org.monroe.team.android.box.support.ApplicationSupport;
 import org.monroe.team.android.box.utils.DateUtils;
 
@@ -18,12 +20,12 @@ import team.monroe.org.routetraffic.uc.GetWanTrafficForPeriod;
 
 public class RouteTrafficApp extends ApplicationSupport<RouteTrafficModel>{
 
-    private FetchingService.FetchingServiceControl fetchingServiceControl;
+    private FetchingDaemon.FetchingServiceControl fetchingServiceControl;
     private ServiceReadyObserver serviceObserver;
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            fetchingServiceControl = (FetchingService.FetchingServiceControl) service;
+            fetchingServiceControl = (FetchingDaemon.FetchingServiceControl) service;
             if (serviceObserver != null) serviceObserver.onServiceReady();
         }
 
@@ -46,8 +48,8 @@ public class RouteTrafficApp extends ApplicationSupport<RouteTrafficModel>{
     }
 
     public void initFetchService(){
-        startService(new Intent(this, FetchingService.class));
-        bindService(new Intent(this, FetchingService.class),connection, Service.BIND_AUTO_CREATE);
+        startService(new Intent(this, FetchingDaemon.class));
+        bindService(new Intent(this, FetchingDaemon.class),connection, Service.BIND_AUTO_CREATE);
     }
 
     public synchronized void subscribeOnFetchServiceReady(ServiceReadyObserver observer){
@@ -160,6 +162,18 @@ public class RouteTrafficApp extends ApplicationSupport<RouteTrafficModel>{
                         trafficCallback.onDone(stat.out, stat.in,stat.avrOut, stat.avrIn);
                     }
                 });
+    }
+
+    public FetchingDaemon.State getLastDaemonStatus() {
+        return FetchingDaemon.State.valueOf(model().usingService(SettingManager.class).get(RouteTrafficModel.DAEMON_STATE));
+    }
+
+    public String convertDaemonStatus(FetchingDaemon.State lastDaemonStatus) {
+        switch (lastDaemonStatus){
+            case UNSPECIFIED: return "NaN";
+            case LAST_FAIL: return "Fail";
+        }
+        return "Successful";
     }
 
     public static interface WanTrafficCallback {

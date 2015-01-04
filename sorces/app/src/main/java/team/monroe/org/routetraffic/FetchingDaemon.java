@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
@@ -14,16 +13,20 @@ import android.util.Pair;
 
 import org.monroe.team.android.box.Closure;
 import org.monroe.team.android.box.event.Event;
-import org.monroe.team.android.box.manager.Model;
+import org.monroe.team.android.box.manager.EventMessenger;
 import org.monroe.team.android.box.manager.SettingManager;
-
-import java.util.Objects;
 
 import team.monroe.org.routetraffic.uc.FetchStatistic;
 
-public class FetchingService extends Service {
+public class FetchingDaemon extends Service {
 
-    public FetchingService() {}
+    public enum State{
+        UNSPECIFIED,
+        LAST_FAIL,
+        LAST_SUCCESS
+    }
+
+    public FetchingDaemon() {}
 
     private FetchingThread fetchingThread = null;
 
@@ -83,22 +86,22 @@ public class FetchingService extends Service {
 
         @Override
         public boolean isRunning() {
-            return FetchingService.this.isRunning();
+            return FetchingDaemon.this.isRunning();
         }
 
         @Override
         public void start() {
-            FetchingService.this.start();
+            FetchingDaemon.this.start();
         }
 
         @Override
         public void stop() {
-            FetchingService.this.stop();
+            FetchingDaemon.this.stop();
         }
 
         @Override
         public void shutdown() {
-            FetchingService.this.shutdown();
+            FetchingDaemon.this.shutdown();
         }
 
     }
@@ -108,7 +111,6 @@ public class FetchingService extends Service {
         stopSelf();
     }
 
-    Object owner = new Object();
     private synchronized void start() {
         getSettingManager().set(RouteTrafficModel.DAEMON_ACTIVE, true);
         if (isRunning()) return;
@@ -116,7 +118,7 @@ public class FetchingService extends Service {
         updateNotification(out, in);
         fetchingThread = new FetchingThread();
         fetchingThread.start();
-        Event.subscribeOnEvent(this,owner,RouteTrafficModel.TODAY_STATISTIC_UPDATE,new Closure<Pair<Long, Long>, Void>() {
+        Event.subscribeOnEvent(this, this, RouteTrafficModel.EVENT_TODAY_STATISTIC_UPDATE,new Closure<Pair<Long, Long>, Void>() {
             @Override
             public Void execute(Pair<Long, Long> arg) {
                 updateNotification(arg.first, arg.second);
@@ -135,13 +137,15 @@ public class FetchingService extends Service {
         if (fetchingThread != null) {
             fetchingThread.interrupt();
             fetchingThread = null;
-            Event.unSubscribeFromEvents(this,owner);
+            Event.unSubscribeFromEvents(this,this);
         }
     }
 
     private void doFetch() {
+        State newState = State.UNSPECIFIED;
         FetchStatistic.FetchingStatus status = ((RouteTrafficApp) getApplication()).model().execute(FetchStatistic.class,null);
         if (status != FetchStatistic.FetchingStatus.SUCCESS){
+            newState = State.LAST_FAIL;
             String msg = ((RouteTrafficApp) getApplication()).fetchStatusToString(status);
 
             Intent intent = new Intent(this, Dashboard.class);
@@ -155,19 +159,23 @@ public class FetchingService extends Service {
                     .setSmallIcon(R.drawable.white_icon).build();
 
             ((RouteTrafficApp) getApplication()).model().usingService(NotificationManager.class).notify(112,notification);
+        } else {
+            newState = State.LAST_SUCCESS;
         }
+
+        getSettingManager().set(RouteTrafficModel.DAEMON_STATE, newState.name());
+        ((RouteTrafficApp)getApplication()).model()
+                .usingService(EventMessenger.class).send(RouteTrafficModel.EVENT_DAEMON_LAST_STATE,newState);
     }
 
     class FetchingThread extends Thread {
         @Override
         public void run() {
-            while (!isInterrupted() && FetchingService.this.fetchingThread == this){
-                FetchingService.this.doFetch();
+            while (!isInterrupted() && FetchingDaemon.this.fetchingThread == this){
+                FetchingDaemon.this.doFetch();
                 try {
                     Thread.sleep(5000);
-                } catch (InterruptedException e) {
-
-                }
+                } catch (InterruptedException e) {}
             }
         }
     }

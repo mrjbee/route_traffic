@@ -16,12 +16,15 @@ import org.monroe.team.android.box.manager.SettingManager;
 
 import team.monroe.org.routetraffic.db.Dao;
 import team.monroe.org.routetraffic.db.RouteTrafficDBSchema;
+import team.monroe.org.routetraffic.events.DaemonStateChangedEvent;
 import team.monroe.org.routetraffic.events.TodayStatisticChangeEvent;
 import team.monroe.org.routetraffic.service.HttpPageLoader;
 import team.monroe.org.routetraffic.service.PageParser;
 
 public class RouteTrafficModel extends Model {
 
+
+    public static final SettingManager.SettingItem<String> DAEMON_STATE = new SettingManager.SettingItem<>("DAEMON_STATE", String.class, FetchingDaemon.State.UNSPECIFIED.name());
     public static final SettingManager.SettingItem<Boolean> DAEMON_ACTIVE = new SettingManager.SettingItem<>("DAEMON_ACTIVE",Boolean.class,false);
     public static final SettingManager.SettingItem<Long> COMPENSATION_BALANCE_OUT = new SettingManager.SettingItem<>("COMPENSATION_BALANCE_OUT",Long.class,-1l);
     public static final SettingManager.SettingItem<Long> COMPENSATION_BALANCE_IN = new SettingManager.SettingItem<>("COMPENSATION_BALANCE_IN",Long.class,-1l);
@@ -31,7 +34,8 @@ public class RouteTrafficModel extends Model {
     public static final SettingManager.SettingItem<String> ROUTER_PASS = new SettingManager.SettingItem<>("ROUTER_PASS",String.class,"admin");
 
 
-    public static final TodayStatisticChangeEvent TODAY_STATISTIC_UPDATE = new TodayStatisticChangeEvent();
+    public static final TodayStatisticChangeEvent EVENT_TODAY_STATISTIC_UPDATE = new TodayStatisticChangeEvent();
+    public static final DaemonStateChangedEvent EVENT_DAEMON_LAST_STATE = new DaemonStateChangedEvent();
 
     public RouteTrafficModel(Context context) {
         super("route_traffic", context);

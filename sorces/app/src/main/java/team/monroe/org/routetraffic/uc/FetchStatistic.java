@@ -11,8 +11,6 @@ import org.monroe.team.android.box.uc.UserCaseSupport;
 import org.monroe.team.android.box.utils.DateUtils;
 
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import team.monroe.org.routetraffic.RouteTrafficModel;
 import team.monroe.org.routetraffic.db.Dao;
@@ -37,7 +35,7 @@ public class FetchStatistic extends UserCaseSupport<Void,FetchStatistic.Fetching
             if (page == null) return FetchingStatus.UNSUPPORTED_FORMAT;
             PageParser.Details data = using(PageParser.class).extractWanDetails(page);
             PageParser.Details details = postToDB(data);
-            using(EventMessenger.class).send(RouteTrafficModel.TODAY_STATISTIC_UPDATE,new Pair<Long, Long>(details.wanOut,details.wanIn));
+            using(EventMessenger.class).send(RouteTrafficModel.EVENT_TODAY_STATISTIC_UPDATE,new Pair<Long, Long>(details.wanOut,details.wanIn));
             return FetchingStatus.SUCCESS;
         } catch (HttpPageLoader.ConnectivityException e) {
             return FetchingStatus.ERROR_NO_CONNECTION;

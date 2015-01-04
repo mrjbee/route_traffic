@@ -69,7 +69,6 @@
                     android:layout_marginBottom="10dp" />
 
                 <CheckBox
-                    android:layout_below="@+id/dash_daemon_caption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
@@ -77,8 +76,9 @@
                     android:textColor="@color/theme_font"
                     android:checked="false"
                     android:id="@+id/dash_daemon_enable_check"
-                    android:layout_alignLeft="@+id/dash_daemon_caption"
-                    android:layout_alignStart="@+id/dash_daemon_caption" />
+                    android:layout_below="@+id/dash_daemon_status"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
 
                 <Button
                     android:layout_width="wrap_content"
@@ -86,9 +86,33 @@
                     android:text="Update WAN Details"
                     android:id="@+id/dash_action_manual_fetch"
                     android:layout_gravity="center_horizontal"
-                    android:layout_below="@+id/dash_daemon_enable_check"
-                    android:layout_alignLeft="@+id/dash_daemon_enable_check"
-                    android:layout_alignStart="@+id/dash_daemon_enable_check" />
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
+
+                <TextView
+                    android:textSize="16sp"
+                    android:textColor="@color/theme_font"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Last run status"
+                    android:id="@+id/dash_daemon_status"
+                    android:layout_below="@+id/dash_daemon_caption"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:textSize="16sp"
+                    android:textColor="@color/theme_font"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NaN"
+                    android:id="@+id/dash_daemon_status_value"
+                    android:textStyle="bold"
+                    android:paddingLeft="10dp"
+                    android:layout_below="@+id/dash_daemon_caption"
+                    android:layout_toRightOf="@+id/dash_daemon_status"
+                    android:layout_toEndOf="@+id/dash_daemon_status" />
 
             </RelativeLayout>
 
