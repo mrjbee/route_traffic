@@ -11,6 +11,9 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 
+import org.monroe.team.android.box.event.Event;
+import org.monroe.team.android.box.manager.Model;
+
 import team.monroe.org.routetraffic.uc.FetchStatistic;
 
 public class FetchingService extends Service {
@@ -33,22 +36,32 @@ public class FetchingService extends Service {
     private synchronized void doActualStartIfRequired() {
         if (fetchingThread != null) return;
 
+        int out = -1, in = -1;
+        updateNotification(out, in);
+
+        fetchingThread = new FetchingThread();
+        fetchingThread.start();
+    }
+
+    private void updateNotification(int out, int in) {
+        String text = "Collecting data";
+
+        if (out > 0 ){
+            text = "Sent:"+in+", Received:"+out;
+        }
+
         Intent intent = new Intent(this, Dashboard.class);
         PendingIntent intent1 = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-
-
         Notification notification = new NotificationCompat.Builder(this)
-                .setContentText("Collecting data")
+                .setContentText(text)
                 .setContentTitle("Route Traffic")
                 .setContentIntent(intent1)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
                 .setSmallIcon(R.drawable.white_icon).build();
 
-        startForeground(111,notification);
 
-        fetchingThread = new FetchingThread();
-        fetchingThread.start();
+        startForeground(111,notification);
     }
 
     @Override

@@ -67,8 +67,8 @@ public class Dashboard extends ActivitySupport<RouteTrafficApp> {
         Event.subscribeOnEvent(this, this, RouteTrafficModel.TODAY_STATISTIC_UPDATE, new Closure<Pair<Long, Long>, Void>() {
             @Override
             public Void execute(Pair<Long, Long> arg) {
-                view(R.id.dash_today_received_value, TextView.class).setText(bytesToHuman(arg.first));
-                view(R.id.dash_today_sent_value, TextView.class).setText(bytesToHuman(arg.second));
+                view(R.id.dash_today_received_value, TextView.class).setText(application().bytesToHuman(arg.first));
+                view(R.id.dash_today_sent_value, TextView.class).setText(application().bytesToHuman(arg.second));
                 return null;
             }
         });
@@ -91,23 +91,6 @@ public class Dashboard extends ActivitySupport<RouteTrafficApp> {
         });
     }
 
-    private String bytesToHuman(Long bytes) {
-        StringBuilder builder = new StringBuilder();
-        long gB =  bytes/1073741824l;
-        long mB =  bytes/1048576l;
-        long kB =  bytes/1024;
-        if (gB > 0){
-            builder.append(gB).append(" GB ");
-        }
-        if (mB > 0){
-            builder.append(mB).append(" MB ");
-        }
-        if (gB < 0 && kB > 0){
-            builder.append(mB).append(" KB ");
-        }
-        builder.deleteCharAt(builder.length()-1);
-        return builder.toString();
-    }
 
     @Override
     protected void onPause() {
