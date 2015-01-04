@@ -1,18 +1,13 @@
 package team.monroe.org.routetraffic;
 
-import android.app.Activity;
-import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,35 +28,38 @@ public class Dashboard extends ActivitySupport<RouteTrafficApp> {
                 openSettings();
             }
         });
-        view(R.id.dash_test_connection, Button.class).setOnClickListener(new View.OnClickListener() {
+        view(R.id.dash_daemon_enable_check, Button.class).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                view(R.id.dash_test_connection, Button.class).setEnabled(false);
+                view(R.id.dash_daemon_enable_check, Button.class).setEnabled(false);
                 application().fetchWanTraffic(new RouteTrafficApp.TrafficStatisticCallback() {
                     @Override
                     public void onDone() {
-                        view(R.id.dash_test_connection, Button.class).setEnabled(true);
+                        view(R.id.dash_daemon_enable_check, Button.class).setEnabled(true);
                     }
 
                     @Override
                     public void onError(String msg) {
                         Toast.makeText(Dashboard.this, msg, Toast.LENGTH_LONG).show();
-                        view(R.id.dash_test_connection, Button.class).setEnabled(true);
+                        view(R.id.dash_daemon_enable_check, Button.class).setEnabled(true);
 
                     }
                 });
             }
         });
-        view(R.id.dash_daemon_enable, CheckBox.class).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        view(R.id.dash_daemon_enable_check, CheckBox.class).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    application().startFetchService();
-                } else {
-                    if (!application().stopFetchService()) {
-                        buttonView.setChecked(true);
+                    try {
+                        if (isChecked) {
+                            application().startFetchService();
+                        } else {
+                            application().stopFetchService();
+                        }
+                    } catch (RouteTrafficApp.ServiceUnavailableException e) {
+                        requestFetchServiceDetails();
                     }
-                }
             }
         });
         Event.subscribeOnEvent(this, this, RouteTrafficModel.TODAY_STATISTIC_UPDATE, new Closure<Pair<Long, Long>, Void>() {
@@ -70,6 +68,22 @@ public class Dashboard extends ActivitySupport<RouteTrafficApp> {
                 view(R.id.dash_today_received_value, TextView.class).setText(application().bytesToHuman(arg.first));
                 view(R.id.dash_today_sent_value, TextView.class).setText(application().bytesToHuman(arg.second));
                 return null;
+            }
+        });
+        requestFetchServiceDetails();
+    }
+
+    private void requestFetchServiceDetails() {
+        view(R.id.dash_daemon_panel).setVisibility(View.GONE);
+        application().subscribeOnFetchServiceReady(new RouteTrafficApp.ServiceReadyObserver() {
+            @Override
+            public void onServiceReady() {
+                try {
+                    view(R.id.dash_daemon_enable_check, CheckBox.class).setChecked(application().isFetchServiceActivated());
+                    view(R.id.dash_daemon_panel).setVisibility(View.VISIBLE);
+                } catch (RouteTrafficApp.ServiceUnavailableException e) {
+                    requestFetchServiceDetails();
+                }
             }
         });
     }

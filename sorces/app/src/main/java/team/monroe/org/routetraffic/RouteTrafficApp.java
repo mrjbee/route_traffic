@@ -14,10 +14,12 @@ import team.monroe.org.routetraffic.uc.FetchStatistic;
 public class RouteTrafficApp extends ApplicationSupport<RouteTrafficModel>{
 
     private FetchingService.FetchingServiceControl fetchingServiceControl;
+    private ServiceReadyObserver serviceObserver;
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             fetchingServiceControl = (FetchingService.FetchingServiceControl) service;
+            if (serviceObserver != null) serviceObserver.onServiceReady();
         }
 
         @Override
@@ -26,9 +28,11 @@ public class RouteTrafficApp extends ApplicationSupport<RouteTrafficModel>{
         }
     };
 
+
     @Override
     public void onCreate() {
         super.onCreate();
+        initFetchService();
     }
 
     @Override
@@ -36,17 +40,40 @@ public class RouteTrafficApp extends ApplicationSupport<RouteTrafficModel>{
         return new RouteTrafficModel(this);
     }
 
-    public void startFetchService(){
+    public void initFetchService(){
         startService(new Intent(this, FetchingService.class));
         bindService(new Intent(this, FetchingService.class),connection, Service.BIND_AUTO_CREATE);
     }
 
-    public boolean stopFetchService(){
-        if (fetchingServiceControl == null)
-            return false;
-        fetchingServiceControl.doStop();
-        return true;
+    public synchronized void subscribeOnFetchServiceReady(ServiceReadyObserver observer){
+        this.serviceObserver = observer;
+        if (fetchingServiceControl != null){
+            observer.onServiceReady();
+        } else {
+            initFetchService();
+        }
     }
+
+    public boolean isFetchServiceActivated() throws ServiceUnavailableException {
+        checkServiceAvailability();
+        return  fetchingServiceControl.isRunning();
+    }
+
+    public void startFetchService() throws ServiceUnavailableException {
+        checkServiceAvailability();
+        fetchingServiceControl.start();
+    }
+
+    public void stopFetchService() throws ServiceUnavailableException {
+        checkServiceAvailability();
+        fetchingServiceControl.stop();
+    }
+
+    private void checkServiceAvailability() throws ServiceUnavailableException {
+        if (fetchingServiceControl == null)
+            throw new ServiceUnavailableException();
+    }
+
 
     public void fetchWanTraffic(final TrafficStatisticCallback callback) {
         model().execute(FetchStatistic.class, null, new Model.BackgroundResultCallback<FetchStatistic.FetchingStatus>() {
@@ -86,6 +113,7 @@ public class RouteTrafficApp extends ApplicationSupport<RouteTrafficModel>{
     }
 
 
+
     public String fetchStatusToString(FetchStatistic.FetchingStatus status) {
         switch (status) {
             case SUCCESS:
@@ -106,4 +134,10 @@ public class RouteTrafficApp extends ApplicationSupport<RouteTrafficModel>{
         public void onDone();
         public void onError(String message);
     }
+
+    public interface ServiceReadyObserver{
+        public void onServiceReady();
+    }
+
+    public static class ServiceUnavailableException extends Exception{}
 }

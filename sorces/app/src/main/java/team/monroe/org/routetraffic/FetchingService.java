@@ -24,7 +24,6 @@ public class FetchingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        doActualStartIfRequired();
         return START_NOT_STICKY;
     }
 
@@ -33,15 +32,6 @@ public class FetchingService extends Service {
         super.onDestroy();
     }
 
-    private synchronized void doActualStartIfRequired() {
-        if (fetchingThread != null) return;
-
-        int out = -1, in = -1;
-        updateNotification(out, in);
-
-        fetchingThread = new FetchingThread();
-        fetchingThread.start();
-    }
 
     private void updateNotification(int out, int in) {
         String text = "Collecting data";
@@ -61,7 +51,7 @@ public class FetchingService extends Service {
                 .setSmallIcon(R.drawable.white_icon).build();
 
 
-        startForeground(111,notification);
+        startForeground(111, notification);
     }
 
     @Override
@@ -70,22 +60,59 @@ public class FetchingService extends Service {
     }
 
     public static interface FetchingServiceControl{
-        public void doStop();
+        public boolean isRunning();
+        public void start();
+        public void stop();
+        public void shutdown();
     }
 
     class FetchingServiceControlImpl extends Binder implements FetchingServiceControl{
-        @Override
-        public void doStop() {
-            FetchingService.this.stop();
 
+        @Override
+        public boolean isRunning() {
+            return FetchingService.this.isRunning();
         }
+
+        @Override
+        public void start() {
+            FetchingService.this.start();
+        }
+
+        @Override
+        public void stop() {
+            FetchingService.this.stop();
+        }
+
+        @Override
+        public void shutdown() {
+            FetchingService.this.shutdown();
+        }
+
+    }
+
+    private void shutdown() {
+        stop();
+        stopSelf();
+    }
+
+    private void start() {
+        if (isRunning()) return;
+        int out = -1, in = -1;
+        updateNotification(out, in);
+        fetchingThread = new FetchingThread();
+        fetchingThread.start();
+    }
+
+    private boolean isRunning() {
+        return fetchingThread != null;
     }
 
     private synchronized void stop() {
         stopForeground(true);
-        fetchingThread.interrupt();
-        fetchingThread= null;
-        stopSelf();
+        if (fetchingThread != null) {
+            fetchingThread.interrupt();
+            fetchingThread = null;
+        }
     }
 
     private void doFetch() {

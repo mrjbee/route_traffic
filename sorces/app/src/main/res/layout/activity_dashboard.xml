@@ -3,7 +3,8 @@
     android:layout_height="match_parent" 
     tools:context=".Dashboard"
     android:orientation="vertical"
-    android:background="@color/theme_background">
+    android:background="@color/theme_background"
+    android:animateLayoutChanges="true">
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -27,16 +28,7 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/theme_font_options"/>
-        <CheckBox
-            android:layout_below="@+id/dash_caption"
-            android:layout_alignLeft="@+id/dash_caption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:text="enabled"
-            android:textColor="@color/theme_font_options"
-            android:checked="false"
-            android:id="@+id/dash_daemon_enable" />
+
         <ImageButton
             android:id="@+id/dash_option_btn"
             android:layout_margin="10dp"
@@ -47,6 +39,73 @@
             android:background="@drawable/setting_btn"
             />
     </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/dash_daemon_panel"
+        android:layout_margin="10dp"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:background="@drawable/panel_round_white"
+        android:padding="10dp">
+
+        <TextView
+            android:textColor="@color/theme_font"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Wan Traffic Monitor"
+            android:id="@+id/dash_daemon_caption"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textSize="12sp"
+            android:layout_marginBottom="10dp" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="is monitor activated"
+            android:textColor="@color/theme_font"
+            android:checked="false"
+            android:id="@+id/dash_daemon_enable_check"
+            android:layout_centerVertical="true"
+            android:layout_alignLeft="@+id/dash_daemon_caption"
+            android:layout_alignStart="@+id/dash_daemon_caption" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_margin="10dp"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:background="@drawable/panel_round_white"
+        android:padding="10dp">
+
+        <TextView
+            android:textColor="@color/theme_font"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Controls"
+            android:id="@+id/dash_control_caption"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textSize="12sp"
+            android:layout_marginBottom="10dp" />
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Update WAN Details"
+            android:id="@+id/dash_action_manual_fetch"
+            android:layout_gravity="center_horizontal"
+            android:layout_below="@+id/dash_control_caption"
+            android:layout_alignLeft="@+id/dash_control_caption"
+            android:layout_alignStart="@+id/dash_control_caption" />
+
+    </RelativeLayout>
+
     <RelativeLayout
         android:layout_margin="10dp"
         android:layout_width="fill_parent"
@@ -117,12 +176,5 @@
             android:layout_alignStart="@+id/dash_today_sent_value"
             android:paddingLeft="10dp" />
     </RelativeLayout>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Refresh"
-        android:id="@+id/dash_test_connection"
-        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>
