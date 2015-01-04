@@ -73,11 +73,12 @@ public class RouteTrafficApp extends ApplicationSupport<RouteTrafficModel>{
                 return "Successful";
             case ERROR_NO_CONNECTION:
                 return "No connection. Please check your settings";
-            case ERROR_NO_DATA:
+            case UNSUPPORTED_FORMAT:
                 return "Could`n get data. Seems you got unsupported router";
             case ERROR_AUTHORIZATION_FAILED:
                 return "Invalid credential. Please check your settings";
-
+            case UNKNOWN:
+                return "Something goes bad";
         }
         return null;
     }

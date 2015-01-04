@@ -118,81 +118,10 @@
             android:paddingLeft="10dp" />
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_margin="10dp"
-        android:layout_width="fill_parent"
-        android:layout_height="100dp"
-        android:background="@drawable/panel_round_white"
-        android:padding="10dp">
-
-        <TextView
-            android:textColor="@color/theme_font"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="This Month Traffic"
-            android:id="@+id/dash_month_caption_lbl"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:textSize="12sp"
-            android:layout_marginBottom="10dp" />
-
-        <TextView
-            android:textSize="16sp"
-            android:textColor="@color/theme_font"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sent"
-            android:id="@+id/dash_month_sent"
-            android:layout_below="@+id/dash_month_caption_lbl"
-            android:layout_alignLeft="@+id/dash_month_caption_lbl"
-            android:layout_alignStart="@+id/dash_month_caption_lbl"
-            android:layout_marginLeft="19dp"
-            android:layout_marginStart="19dp" />
-
-        <TextView
-            android:textSize="16sp"
-            android:textColor="@color/theme_font"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="NaN"
-            android:id="@+id/dash_month_sent_value"
-            android:layout_above="@+id/dash_month_recieved"
-            android:layout_toRightOf="@+id/dash_month_recieved"
-            android:layout_toEndOf="@+id/dash_month_recieved"
-            android:layout_marginRight="15dp"
-            android:textStyle="bold"
-            android:paddingLeft="10dp" />
-
-        <TextView
-            android:textSize="16sp"
-            android:textColor="@color/theme_font"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Received"
-            android:id="@+id/dash_month_recieved"
-            android:layout_below="@+id/dash_month_sent"
-            android:layout_alignLeft="@+id/dash_month_sent"
-            android:layout_alignStart="@+id/dash_month_sent" />
-
-        <TextView
-            android:textSize="16sp"
-            android:textColor="@color/theme_font"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="NaN"
-            android:id="@+id/dash_month_received_value"
-            android:textStyle="bold"
-            android:layout_alignBottom="@+id/dash_month_recieved"
-            android:layout_alignLeft="@+id/dash_month_sent_value"
-            android:layout_alignStart="@+id/dash_month_sent_value"
-            android:paddingLeft="10dp" />
-    </RelativeLayout>
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Test Connection"
+        android:text="Refresh"
         android:id="@+id/dash_test_connection"
         android:layout_gravity="center_horizontal" />
 

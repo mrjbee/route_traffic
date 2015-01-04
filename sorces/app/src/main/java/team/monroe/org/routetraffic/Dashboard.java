@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,8 +13,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import org.monroe.team.android.box.Closure;
+import org.monroe.team.android.box.event.Event;
 import org.monroe.team.android.box.support.ActivitySupport;
 
 
@@ -33,7 +37,7 @@ public class Dashboard extends ActivitySupport<RouteTrafficApp> {
             @Override
             public void onClick(View v) {
                 view(R.id.dash_test_connection, Button.class).setEnabled(false);
-                application().fetchWanTraffic( new RouteTrafficApp.TrafficStatisticCallback() {
+                application().fetchWanTraffic(new RouteTrafficApp.TrafficStatisticCallback() {
                     @Override
                     public void onDone() {
                         view(R.id.dash_test_connection, Button.class).setEnabled(true);
@@ -51,15 +55,63 @@ public class Dashboard extends ActivitySupport<RouteTrafficApp> {
         view(R.id.dash_daemon_enable, CheckBox.class).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
+                if (isChecked) {
                     application().startFetchService();
                 } else {
-                    if(!application().stopFetchService()){
+                    if (!application().stopFetchService()) {
                         buttonView.setChecked(true);
                     }
                 }
             }
         });
+        Event.subscribeOnEvent(this, this, RouteTrafficModel.TODAY_STATISTIC_UPDATE, new Closure<Pair<Long, Long>, Void>() {
+            @Override
+            public Void execute(Pair<Long, Long> arg) {
+                view(R.id.dash_today_received_value, TextView.class).setText(bytesToHuman(arg.first));
+                view(R.id.dash_today_sent_value, TextView.class).setText(bytesToHuman(arg.second));
+                return null;
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        Event.unSubscribeFromEvents(this,this);
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        application().fetchWanTraffic(new RouteTrafficApp.TrafficStatisticCallback() {
+            @Override
+            public void onDone() {}
+            @Override
+            public void onError(String message) {}
+        });
+    }
+
+    private String bytesToHuman(Long bytes) {
+        StringBuilder builder = new StringBuilder();
+        long gB =  bytes/1073741824l;
+        long mB =  bytes/1048576l;
+        long kB =  bytes/1024;
+        if (gB > 0){
+            builder.append(gB).append(" GB ");
+        }
+        if (mB > 0){
+            builder.append(mB).append(" MB ");
+        }
+        if (gB < 0 && kB > 0){
+            builder.append(mB).append(" KB ");
+        }
+        builder.deleteCharAt(builder.length()-1);
+        return builder.toString();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override
