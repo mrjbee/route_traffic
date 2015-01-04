@@ -5,11 +5,16 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.util.Pair;
 
 import org.monroe.team.android.box.manager.Model;
 import org.monroe.team.android.box.support.ApplicationSupport;
+import org.monroe.team.android.box.utils.DateUtils;
+
+import java.util.Date;
 
 import team.monroe.org.routetraffic.uc.FetchStatistic;
+import team.monroe.org.routetraffic.uc.GetWanTrafficForPeriod;
 
 public class RouteTrafficApp extends ApplicationSupport<RouteTrafficModel>{
 
@@ -94,12 +99,13 @@ public class RouteTrafficApp extends ApplicationSupport<RouteTrafficModel>{
         });
     }
 
-    public String bytesToHuman(Long bytes, boolean extended) {
 
+    public String bytesToHuman(Long bytes, boolean extended) {
+        if (bytes < 0) return "NaN";
         StringBuilder builder = new StringBuilder();
         long gB =  bytes/1073741824l;
-        long mB =  bytes/1048576l;
-        long kB =  bytes/1024;
+        long mB =  (bytes - gB * 1073741824l)/1048576l;
+        long kB =  (bytes - gB * 1073741824l - mB*1048576l)/1024;
 
         if (gB > 0){
             builder.append(gB).append(" GB ");
@@ -130,6 +136,34 @@ public class RouteTrafficApp extends ApplicationSupport<RouteTrafficModel>{
                 return "Something goes bad";
         }
         return null;
+    }
+
+    public void getWanMonthTraffic(final WanTrafficCallback trafficCallback) {
+         model().execute(GetWanTrafficForPeriod.class, new Pair<Date, Date>(
+                 DateUtils.monthOnly(DateUtils.now()),
+                 DateUtils.mathMonth(DateUtils.monthOnly(DateUtils.now()),+1)),
+             new Model.BackgroundResultCallback<GetWanTrafficForPeriod.WanStat>() {
+                 @Override
+                 public void onResult(GetWanTrafficForPeriod.WanStat stat) {
+                    trafficCallback.onDone(stat.out, stat.in,stat.avrOut, stat.avrIn);
+                 }
+         });
+    }
+
+    public void getWanLastMonthTraffic(final WanTrafficCallback trafficCallback) {
+        model().execute(GetWanTrafficForPeriod.class, new Pair<Date, Date>(
+                        DateUtils.mathMonth(DateUtils.monthOnly(DateUtils.now()),-1),
+                        DateUtils.monthOnly(DateUtils.now())),
+                new Model.BackgroundResultCallback<GetWanTrafficForPeriod.WanStat>() {
+                    @Override
+                    public void onResult(GetWanTrafficForPeriod.WanStat stat) {
+                        trafficCallback.onDone(stat.out, stat.in,stat.avrOut, stat.avrIn);
+                    }
+                });
+    }
+
+    public static interface WanTrafficCallback {
+        public void onDone(long out, long in, long aout, long ain);
     }
 
     public static interface TrafficStatisticCallback {

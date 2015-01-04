@@ -21,6 +21,7 @@
         <TextView
             android:id="@+id/dash_caption"
             android:layout_toRightOf="@+id/dash_icon"
+            android:layout_centerInParent="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Route Traffic"
@@ -39,142 +40,243 @@
             android:background="@drawable/setting_btn"
             />
     </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/dash_daemon_panel"
-        android:layout_margin="10dp"
+    <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="100dp"
-        android:background="@drawable/panel_round_white"
-        android:padding="10dp">
-
-        <TextView
-            android:textColor="@color/theme_font"
-            android:layout_width="wrap_content"
+        android:layout_height="fill_parent">
+        <LinearLayout
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Wan Traffic Monitor"
-            android:id="@+id/dash_daemon_caption"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:textSize="12sp"
-            android:layout_marginBottom="10dp" />
+            android:orientation="vertical"
+            android:weightSum="1">
+            <RelativeLayout
+                android:id="@+id/dash_daemon_panel"
+                android:layout_margin="10dp"
+                android:layout_width="fill_parent"
+                android:layout_height="150dp"
+                android:background="@drawable/panel_round_white"
+                android:padding="15dp">
 
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:text="is monitor activated"
-            android:textColor="@color/theme_font"
-            android:checked="false"
-            android:id="@+id/dash_daemon_enable_check"
-            android:layout_centerVertical="true"
-            android:layout_alignLeft="@+id/dash_daemon_caption"
-            android:layout_alignStart="@+id/dash_daemon_caption" />
+                <TextView
+                    android:textColor="@color/theme_font"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Wan Traffic Monitor"
+                    android:id="@+id/dash_daemon_caption"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="10dp" />
 
-    </RelativeLayout>
+                <CheckBox
+                    android:layout_below="@+id/dash_daemon_caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:text="is monitor activated"
+                    android:textColor="@color/theme_font"
+                    android:checked="false"
+                    android:id="@+id/dash_daemon_enable_check"
+                    android:layout_alignLeft="@+id/dash_daemon_caption"
+                    android:layout_alignStart="@+id/dash_daemon_caption" />
 
-    <RelativeLayout
-        android:layout_margin="10dp"
-        android:layout_width="fill_parent"
-        android:layout_height="100dp"
-        android:background="@drawable/panel_round_white"
-        android:padding="10dp">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Update WAN Details"
+                    android:id="@+id/dash_action_manual_fetch"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_below="@+id/dash_daemon_enable_check"
+                    android:layout_alignLeft="@+id/dash_daemon_enable_check"
+                    android:layout_alignStart="@+id/dash_daemon_enable_check" />
 
-        <TextView
-            android:textColor="@color/theme_font"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Controls"
-            android:id="@+id/dash_control_caption"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:textSize="12sp"
-            android:layout_marginBottom="10dp" />
+            </RelativeLayout>
 
+            <RelativeLayout
+                android:layout_margin="10dp"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/panel_round_white"
+                android:padding="15dp">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Update WAN Details"
-            android:id="@+id/dash_action_manual_fetch"
-            android:layout_gravity="center_horizontal"
-            android:layout_below="@+id/dash_control_caption"
-            android:layout_alignLeft="@+id/dash_control_caption"
-            android:layout_alignStart="@+id/dash_control_caption" />
+                <TextView
+                    android:textColor="@color/theme_font"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Wan Traffic"
+                    android:id="@+id/dash_today_caption_lbl"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="10dp" />
 
-    </RelativeLayout>
+                <TextView
+                    android:textSize="16sp"
+                    android:textColor="@color/theme_font"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Today Sent"
+                    android:id="@+id/dash_today_sent"
+                    android:layout_below="@+id/dash_today_caption_lbl"
+                    android:layout_alignLeft="@+id/dash_today_caption_lbl"
+                    android:layout_alignStart="@+id/dash_today_caption_lbl"
+                    android:layout_marginLeft="19dp"
+                    android:layout_marginStart="19dp" />
 
-    <RelativeLayout
-        android:layout_margin="10dp"
-        android:layout_width="fill_parent"
-        android:layout_height="100dp"
-        android:background="@drawable/panel_round_white"
-        android:padding="10dp">
+                <TextView
+                    android:textSize="16sp"
+                    android:textColor="@color/theme_font"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NaN"
+                    android:id="@+id/dash_today_sent_value"
+                    android:layout_above="@+id/dash_today_recieved"
+                    android:layout_toRightOf="@+id/dash_today_recieved"
+                    android:layout_toEndOf="@+id/dash_today_recieved"
+                    android:layout_marginRight="15dp"
+                    android:textStyle="bold"
+                    android:paddingLeft="10dp" />
 
-        <TextView
-            android:textColor="@color/theme_font"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Today Traffic"
-            android:id="@+id/dash_today_caption_lbl"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:textSize="12sp"
-            android:layout_marginBottom="10dp" />
+                <TextView
+                    android:textSize="16sp"
+                    android:textColor="@color/theme_font"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Today Received"
+                    android:id="@+id/dash_today_recieved"
+                    android:layout_below="@+id/dash_today_sent"
+                    android:layout_alignLeft="@+id/dash_today_sent"
+                    android:layout_alignStart="@+id/dash_today_sent" />
 
-        <TextView
-            android:textSize="16sp"
-            android:textColor="@color/theme_font"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sent"
-            android:id="@+id/dash_today_sent"
-            android:layout_below="@+id/dash_today_caption_lbl"
-            android:layout_alignLeft="@+id/dash_today_caption_lbl"
-            android:layout_alignStart="@+id/dash_today_caption_lbl"
-            android:layout_marginLeft="19dp"
-            android:layout_marginStart="19dp" />
+                <TextView
+                    android:textSize="16sp"
+                    android:textColor="@color/theme_font"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NaN"
+                    android:id="@+id/dash_today_received_value"
+                    android:textStyle="bold"
+                    android:layout_alignBottom="@+id/dash_today_recieved"
+                    android:layout_alignLeft="@+id/dash_today_sent_value"
+                    android:layout_alignStart="@+id/dash_today_sent_value"
+                    android:paddingLeft="10dp" />
 
-        <TextView
-            android:textSize="16sp"
-            android:textColor="@color/theme_font"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="NaN"
-            android:id="@+id/dash_today_sent_value"
-            android:layout_above="@+id/dash_today_recieved"
-            android:layout_toRightOf="@+id/dash_today_recieved"
-            android:layout_toEndOf="@+id/dash_today_recieved"
-            android:layout_marginRight="15dp"
-            android:textStyle="bold"
-            android:paddingLeft="10dp" />
+                <TextView
+                    android:textSize="16sp"
+                    android:textColor="@color/theme_font"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Month Sent"
+                    android:id="@+id/dash_month_sent"
+                    android:layout_below="@+id/dash_today_recieved"
+                    android:layout_alignLeft="@+id/dash_today_recieved"
+                    android:layout_alignStart="@+id/dash_today_recieved"
+                    android:layout_marginTop="15dp" />
 
-        <TextView
-            android:textSize="16sp"
-            android:textColor="@color/theme_font"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Received"
-            android:id="@+id/dash_today_recieved"
-            android:layout_below="@+id/dash_today_sent"
-            android:layout_alignLeft="@+id/dash_today_sent"
-            android:layout_alignStart="@+id/dash_today_sent" />
+                <TextView
+                    android:textSize="16sp"
+                    android:textColor="@color/theme_font"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NaN"
+                    android:id="@+id/dash_month_sent_value"
+                    android:textStyle="bold"
+                    android:paddingLeft="10dp"
+                    android:layout_above="@+id/dash_month_recevied"
+                    android:layout_toRightOf="@+id/dash_month_recevied"
+                    android:layout_toEndOf="@+id/dash_month_recevied" />
 
-        <TextView
-            android:textSize="16sp"
-            android:textColor="@color/theme_font"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="NaN"
-            android:id="@+id/dash_today_received_value"
-            android:textStyle="bold"
-            android:layout_alignBottom="@+id/dash_today_recieved"
-            android:layout_alignLeft="@+id/dash_today_sent_value"
-            android:layout_alignStart="@+id/dash_today_sent_value"
-            android:paddingLeft="10dp" />
-    </RelativeLayout>
+                <TextView
+                    android:textSize="16sp"
+                    android:textColor="@color/theme_font"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Month Recevied"
+                    android:id="@+id/dash_month_recevied"
+                    android:layout_below="@+id/dash_month_sent"
+                    android:layout_alignLeft="@+id/dash_month_sent"
+                    android:layout_alignStart="@+id/dash_month_sent" />
+
+                <TextView
+                    android:textSize="16sp"
+                    android:textColor="@color/theme_font"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NaN"
+                    android:id="@+id/dash_month_recevied_value"
+                    android:textStyle="bold"
+                    android:paddingLeft="10dp"
+                    android:layout_alignTop="@+id/dash_month_recevied"
+                    android:layout_toRightOf="@+id/dash_month_recevied"
+                    android:layout_toEndOf="@+id/dash_month_recevied" />
+                <LinearLayout
+                    android:id="@+id/dash_stat_separ"
+                    android:layout_below="@+id/dash_month_recevied"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1px"
+                    android:background="@color/theme"
+                    android:layout_margin="10dp"
+                    android:orientation="horizontal" />
+
+                <TextView
+                    android:textSize="12sp"
+                    android:textColor="@color/theme_font"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="This Month (Average Sent/Received)"
+                    android:id="@+id/dash_stat_month_avarege"
+                    android:layout_below="@+id/dash_stat_separ" />
+
+                <TextView
+                    android:textSize="14sp"
+                    android:textColor="@color/theme_font"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NaN"
+                    android:id="@+id/dash_stat_month_avarege_value"
+                    android:textStyle="bold"
+                    android:paddingLeft="10dp"
+                    android:layout_below="@+id/dash_stat_month_avarege"
+                    android:layout_alignLeft="@+id/dash_stat_month_avarege"
+                    android:layout_alignStart="@+id/dash_stat_month_avarege" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/dash_last_month_panel"
+                android:layout_margin="10dp"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/panel_round_white"
+                android:padding="15dp">
+
+            <TextView
+                android:textColor="@color/theme_font"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Last Month (Sent/Received &amp; Avarage Sent/Received)"
+                android:id="@+id/dash_last_month_caption_lbl"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:textSize="12sp"
+                android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:textSize="12sp"
+                    android:textColor="@color/theme_font"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NaN"
+                    android:id="@+id/dash_stat_last_month_avarege_value"
+                    android:textStyle="bold"
+                    android:paddingLeft="10dp"
+                    android:layout_below="@+id/dash_last_month_caption_lbl"
+                    android:layout_alignLeft="@+id/dash_last_month_caption_lbl"
+                    android:layout_alignStart="@+id/dash_last_month_caption_lbl" />
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

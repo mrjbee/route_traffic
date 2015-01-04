@@ -15,6 +15,7 @@ import android.util.Pair;
 import org.monroe.team.android.box.Closure;
 import org.monroe.team.android.box.event.Event;
 import org.monroe.team.android.box.manager.Model;
+import org.monroe.team.android.box.manager.SettingManager;
 
 import java.util.Objects;
 
@@ -28,7 +29,14 @@ public class FetchingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (getSettingManager().get(RouteTrafficModel.DAEMON_ACTIVE)){
+            start();
+        }
         return START_NOT_STICKY;
+    }
+
+    private SettingManager getSettingManager() {
+        return ((RouteTrafficApp)getApplication()).model().usingService(SettingManager.class);
     }
 
     @Override
@@ -102,6 +110,7 @@ public class FetchingService extends Service {
 
     Object owner = new Object();
     private synchronized void start() {
+        getSettingManager().set(RouteTrafficModel.DAEMON_ACTIVE, true);
         if (isRunning()) return;
         long out = -1, in = -1;
         updateNotification(out, in);
@@ -121,6 +130,7 @@ public class FetchingService extends Service {
     }
 
     private synchronized void stop() {
+        getSettingManager().set(RouteTrafficModel.DAEMON_ACTIVE, false);
         stopForeground(true);
         if (fetchingThread != null) {
             fetchingThread.interrupt();

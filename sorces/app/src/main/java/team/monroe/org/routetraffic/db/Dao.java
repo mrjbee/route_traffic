@@ -9,6 +9,7 @@ import org.monroe.team.android.box.db.DAOSupport;
 import org.monroe.team.android.box.db.Schema;
 
 import java.util.Date;
+import java.util.List;
 
 public class Dao extends DAOSupport {
     public Dao(SQLiteDatabase db, Schema schema) {
@@ -60,5 +61,26 @@ public class Dao extends DAOSupport {
                 table(RouteTrafficDBSchema.WanTraffic.class)._DATE +" == ?",
                 strs(now.getTime())
         );
+    }
+
+    public List<Result> getForPeriod(Date startDate, Date endDate) {
+        final Cursor cursor = db.query(table(RouteTrafficDBSchema.WanTraffic.class).TABLE_NAME,
+                strs(table(RouteTrafficDBSchema.WanTraffic.class)._DATE,
+                        table(RouteTrafficDBSchema.WanTraffic.class)._IN,
+                        table(RouteTrafficDBSchema.WanTraffic.class)._OUT),
+                table(RouteTrafficDBSchema.WanTraffic.class)._DATE +" >= ? AND "+
+                table(RouteTrafficDBSchema.WanTraffic.class)._DATE +" < ?",
+                strs(startDate.getTime(),endDate.getTime()),
+                null,
+                null,
+                null);
+
+
+        return bakeMany(cursor, new Closure<Cursor, Result>() {
+            @Override
+            public Result execute(Cursor arg) {
+                return new Result().with(arg.getLong(0),arg.getLong(1),arg.getLong(2));
+            }
+        });
     }
 }

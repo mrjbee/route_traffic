@@ -22,6 +22,7 @@ import team.monroe.org.routetraffic.service.PageParser;
 
 public class RouteTrafficModel extends Model {
 
+    public static final SettingManager.SettingItem<Boolean> DAEMON_ACTIVE = new SettingManager.SettingItem<>("DAEMON_ACTIVE",Boolean.class,false);
     public static final SettingManager.SettingItem<Long> COMPENSATION_BALANCE_OUT = new SettingManager.SettingItem<>("COMPENSATION_BALANCE_OUT",Long.class,-1l);
     public static final SettingManager.SettingItem<Long> COMPENSATION_BALANCE_IN = new SettingManager.SettingItem<>("COMPENSATION_BALANCE_IN",Long.class,-1l);
 
