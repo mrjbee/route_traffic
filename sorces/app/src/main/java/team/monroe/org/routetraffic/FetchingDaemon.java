@@ -139,6 +139,7 @@ public class FetchingDaemon extends Service {
                             msg.put("app","route_traffic");
                             msg.put("out",Long.toString(arg.first));
                             msg.put("in",Long.toString(arg.second));
+                            msg.put("status", getSettingManager().get(RouteTrafficModel.DAEMON_STATE));
                             try {
                                 broadcastAnnouncer.sendMessage(12399,msg);
                             } catch (Exception e) {
@@ -197,6 +198,7 @@ public class FetchingDaemon extends Service {
 
             ((RouteTrafficApp) getApplication()).model().usingService(NotificationManager.class).notify(112,notification);
         } else {
+            ((RouteTrafficApp) getApplication()).model().usingService(NotificationManager.class).cancel(112);
             newState = State.LAST_SUCCESS;
         }
 
@@ -208,12 +210,16 @@ public class FetchingDaemon extends Service {
     class FetchingThread extends Thread {
         @Override
         public void run() {
-            while (!isInterrupted() && FetchingDaemon.this.fetchingThread == this){
+            while (amIAlive()){
                 FetchingDaemon.this.doFetch();
                 try {
                     Thread.sleep(5000);
-                } catch (InterruptedException e) {}
+                } catch (InterruptedException e) {return;}
             }
+        }
+
+        private boolean amIAlive() {
+            return !isInterrupted() && FetchingDaemon.this.fetchingThread == this;
         }
     }
 

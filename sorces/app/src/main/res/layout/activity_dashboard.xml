@@ -3,43 +3,8 @@
     android:layout_height="match_parent" 
     tools:context=".Dashboard"
     android:orientation="vertical"
-    android:background="@color/theme_background"
+    android:background="@color/theme"
     android:animateLayoutChanges="true">
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        >
-        <ImageView
-            android:id="@+id/dash_icon"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/ic_launcher"
-            android:layout_marginLeft="10dp"
-            />
-
-        <TextView
-            android:id="@+id/dash_caption"
-            android:layout_toRightOf="@+id/dash_icon"
-            android:layout_centerInParent="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Route Traffic"
-            android:layout_marginLeft="10dp"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/theme_font_options"/>
-
-        <ImageButton
-            android:id="@+id/dash_option_btn"
-            android:layout_margin="10dp"
-            android:padding="10dp"
-            android:layout_alignParentRight="true"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/setting_btn"
-            />
-    </RelativeLayout>
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
@@ -48,11 +13,48 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:weightSum="1">
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                >
+                <ImageView
+                    android:id="@+id/dash_icon"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/ic_launcher"
+                    android:layout_marginLeft="10dp"
+                    />
+
+                <TextView
+                    android:id="@+id/dash_caption"
+                    android:layout_toRightOf="@+id/dash_icon"
+                    android:layout_centerInParent="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Route Traffic"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/theme_font_options"/>
+
+                <ImageButton
+                    android:id="@+id/dash_option_btn"
+                    android:layout_margin="10dp"
+                    android:padding="10dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/setting_btn"
+                    />
+            </RelativeLayout>
+
             <RelativeLayout
                 android:id="@+id/dash_daemon_panel"
                 android:layout_margin="10dp"
                 android:layout_width="fill_parent"
-                android:layout_height="150dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/panel_round_white"
                 android:padding="15dp">
 
@@ -86,6 +88,7 @@
                     android:text="Update WAN Details"
                     android:id="@+id/dash_action_manual_fetch"
                     android:layout_gravity="center_horizontal"
+                    android:layout_below="@+id/dash_daemon_enable_check"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true" />
