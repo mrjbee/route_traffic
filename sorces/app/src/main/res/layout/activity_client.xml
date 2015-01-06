@@ -1,0 +1,111 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="team.monroe.org.routetraffic.ClientActivity">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/panel"
+        android:minWidth="300dp"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/client_caption_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_launcher_client"
+            android:layout_marginLeft="10dp"
+            />
+
+        <TextView
+            android:id="@+id/client_caption"
+            android:layout_toRightOf="@id/client_caption_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Route Traffic"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="15dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/theme_font_options"/>
+
+        <LinearLayout
+            android:id="@+id/client_stat_separ"
+            android:layout_below="@id/client_caption_icon"
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:background="@color/theme_font_options"
+            android:layout_margin="10dp"
+            android:orientation="horizontal" />
+
+        <TextView
+            android:textSize="16sp"
+            android:textColor="@color/theme_font"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Today Sent"
+            android:id="@+id/client_today_sent"
+            android:layout_below="@+id/client_stat_separ"
+            android:layout_alignLeft="@+id/client_stat_separ"
+            android:layout_alignStart="@+id/client_stat_separ" />
+
+        <TextView
+            android:textSize="16sp"
+            android:textColor="@color/theme_font"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NaN"
+            android:id="@+id/client_today_sent_value"
+            android:textStyle="bold"
+            android:paddingLeft="10dp"
+            android:layout_alignTop="@+id/client_today_sent"
+            android:layout_toRightOf="@+id/client_today_received"
+            android:layout_toEndOf="@+id/client_today_received" />
+
+        <TextView
+            android:textSize="14sp"
+            android:textColor="@color/theme_font"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NaN"
+            android:id="@+id/client_daemon_status"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:paddingRight="10dp" />
+
+        <TextView
+            android:textSize="16sp"
+            android:textColor="@color/theme_font"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Today Received"
+            android:id="@+id/client_today_received"
+            android:layout_below="@+id/client_today_sent"
+            android:layout_alignLeft="@+id/client_today_sent"
+            android:layout_alignStart="@+id/client_today_sent"
+            android:paddingBottom="15dp" />
+
+        <TextView
+            android:textSize="16sp"
+            android:textColor="@color/theme_font"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NaN"
+            android:id="@+id/client_today_recived_value"
+            android:textStyle="bold"
+            android:paddingLeft="10dp"
+            android:layout_alignBaseline="@+id/client_today_received"
+            android:layout_alignBottom="@+id/client_today_received"
+            android:layout_toRightOf="@+id/client_today_received"
+            android:layout_toEndOf="@+id/client_today_received" />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

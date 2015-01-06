@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="team.monroe.org.routetraffic" >
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".RouteTrafficApp"
         android:allowBackup="true"
@@ -10,13 +11,24 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:launchMode="singleInstance"
             android:name=".Dashboard"
             android:label="@string/app_name"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
+        <activity
+            android:name=".ClientActivity"
+            android:label="@string/title_activity_client"
+            android:launchMode="singleInstance"
+            android:theme="@style/AppTheme2"
+            android:icon="@drawable/ic_launcher_client">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -30,6 +42,7 @@
             android:enabled="true"
             android:exported="false" >
         </service>
+
     </application>
 
 </manifest>

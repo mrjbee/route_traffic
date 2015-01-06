@@ -7,7 +7,6 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Pair;
 
-import org.monroe.team.android.box.event.Event;
 import org.monroe.team.android.box.manager.Model;
 import org.monroe.team.android.box.manager.SettingManager;
 import org.monroe.team.android.box.support.ApplicationSupport;
@@ -89,7 +88,7 @@ public class RouteTrafficApp extends ApplicationSupport<RouteTrafficModel>{
                 if (response == FetchStatistic.FetchingStatus.SUCCESS) {
                     callback.onDone();
                 }else {
-                    callback.onError(fetchStatusToString(response));
+                    callback.onError(toHumanFetchStatus(response));
                 }
 
             }
@@ -102,7 +101,7 @@ public class RouteTrafficApp extends ApplicationSupport<RouteTrafficModel>{
     }
 
 
-    public String bytesToHuman(Long bytes, boolean extended) {
+    public String toHumanBytes(Long bytes, boolean extended) {
         if (bytes < 0) return "NaN";
         StringBuilder builder = new StringBuilder();
         long gB =  bytes/1073741824l;
@@ -123,8 +122,15 @@ public class RouteTrafficApp extends ApplicationSupport<RouteTrafficModel>{
     }
 
 
+    public String toHumanDaemonStatus(FetchingDaemon.State lastDaemonStatus) {
+        switch (lastDaemonStatus){
+            case UNSPECIFIED: return "NaN";
+            case LAST_FAIL: return "Fail";
+        }
+        return "Successful";
+    }
 
-    public String fetchStatusToString(FetchStatistic.FetchingStatus status) {
+    public String toHumanFetchStatus(FetchStatistic.FetchingStatus status) {
         switch (status) {
             case SUCCESS:
                 return "Successful";
@@ -168,13 +174,8 @@ public class RouteTrafficApp extends ApplicationSupport<RouteTrafficModel>{
         return FetchingDaemon.State.valueOf(model().usingService(SettingManager.class).get(RouteTrafficModel.DAEMON_STATE));
     }
 
-    public String convertDaemonStatus(FetchingDaemon.State lastDaemonStatus) {
-        switch (lastDaemonStatus){
-            case UNSPECIFIED: return "NaN";
-            case LAST_FAIL: return "Fail";
-        }
-        return "Successful";
-    }
+
+
 
     public static interface WanTrafficCallback {
         public void onDone(long out, long in, long aout, long ain);

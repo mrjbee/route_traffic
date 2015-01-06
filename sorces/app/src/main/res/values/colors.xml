@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="theme">#ff1a1a1a</color>
-    <color name="theme_background">#ff2e3233</color>
+    <color name="theme">#ff2e3233</color>
+    <color name="theme_background">#ff41424c</color>
     <color name="theme_font_options">#9b9b9b</color>
     <color name="theme_font">#ff1a1a1a</color>
 </resources>

@@ -70,11 +70,11 @@ public class Dashboard extends ActivitySupport<RouteTrafficApp> {
             public void onDone(long out, long in,long aout, long ain) {
                 view(R.id.dash_last_month_panel).setVisibility((out>0)?View.VISIBLE:View.GONE);
                 view(R.id.dash_stat_last_month_avarege_value, TextView.class).setText(
-                        application().bytesToHuman(out,false)+"/"+
-                                application().bytesToHuman(in,false)
+                        application().toHumanBytes(out, false)+"/"+
+                                application().toHumanBytes(in, false)
                                 +" & "+
-                        application().bytesToHuman(aout,false)+"/"+
-                                application().bytesToHuman(ain,false)
+                        application().toHumanBytes(aout, false)+"/"+
+                                application().toHumanBytes(ain, false)
                 );
             }
         });
@@ -83,7 +83,7 @@ public class Dashboard extends ActivitySupport<RouteTrafficApp> {
     }
 
     private void updateLastState(FetchingDaemon.State state) {
-        view(R.id.dash_daemon_status_value, TextView.class).setText(application().convertDaemonStatus(state));
+        view(R.id.dash_daemon_status_value, TextView.class).setText(application().toHumanDaemonStatus(state));
     }
 
     private void requestFetchServiceDetails() {
@@ -118,16 +118,16 @@ public class Dashboard extends ActivitySupport<RouteTrafficApp> {
         Event.subscribeOnEvent(this, this, RouteTrafficModel.EVENT_TODAY_STATISTIC_UPDATE, new Closure<Pair<Long, Long>, Void>() {
             @Override
             public Void execute(Pair<Long, Long> arg) {
-                view(R.id.dash_today_received_value, TextView.class).setText(application().bytesToHuman(arg.first, true));
-                view(R.id.dash_today_sent_value, TextView.class).setText(application().bytesToHuman(arg.second, true));
+                view(R.id.dash_today_received_value, TextView.class).setText(application().toHumanBytes(arg.first, true));
+                view(R.id.dash_today_sent_value, TextView.class).setText(application().toHumanBytes(arg.second, true));
                 application().getWanMonthTraffic(new RouteTrafficApp.WanTrafficCallback() {
                     @Override
                     public void onDone(long out, long in,long aout, long ain) {
-                        view(R.id.dash_month_recevied_value, TextView.class).setText(application().bytesToHuman(out, true));
-                        view(R.id.dash_month_sent_value, TextView.class).setText(application().bytesToHuman(in, true));
+                        view(R.id.dash_month_recevied_value, TextView.class).setText(application().toHumanBytes(out, true));
+                        view(R.id.dash_month_sent_value, TextView.class).setText(application().toHumanBytes(in, true));
                         view(R.id.dash_stat_month_avarege_value, TextView.class).setText(
-                                application().bytesToHuman(aout,false)+"/"+
-                                        application().bytesToHuman(ain,false)
+                                application().toHumanBytes(aout, false)+"/"+
+                                        application().toHumanBytes(ain, false)
                         );
                     }
                 });

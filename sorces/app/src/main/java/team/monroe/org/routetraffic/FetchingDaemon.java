@@ -17,8 +17,6 @@ import org.monroe.team.android.box.manager.EventMessenger;
 import org.monroe.team.android.box.manager.SettingManager;
 import org.monroe.team.socks.broadcast.DefaultBroadcastAnnouncer;
 import org.monroe.team.socks.exception.ConnectionException;
-import org.monroe.team.socks.exception.InvalidProtocolException;
-import org.monroe.team.socks.exception.SendFailException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +46,11 @@ public class FetchingDaemon extends Service {
     }
 
     private SettingManager getSettingManager() {
-        return ((RouteTrafficApp)getApplication()).model().usingService(SettingManager.class);
+        return application().model().usingService(SettingManager.class);
+    }
+
+    private RouteTrafficApp application() {
+        return ((RouteTrafficApp)getApplication());
     }
 
     @Override
@@ -61,8 +63,8 @@ public class FetchingDaemon extends Service {
         String text = "Collecting data";
 
         if (out > 0 ){
-            text = "Sent:"+((RouteTrafficApp)getApplication()).bytesToHuman(in, false)+", " +
-                   "Received:"+((RouteTrafficApp)getApplication()).bytesToHuman(out, false);
+            text = "Sent:"+ application().toHumanBytes(in, false)+", " +
+                   "Received:"+ application().toHumanBytes(out, false);
         }
 
         Intent intent = new Intent(this, Dashboard.class);
@@ -139,7 +141,8 @@ public class FetchingDaemon extends Service {
                             msg.put("app","route_traffic");
                             msg.put("out",Long.toString(arg.first));
                             msg.put("in",Long.toString(arg.second));
-                            msg.put("status", getSettingManager().get(RouteTrafficModel.DAEMON_STATE));
+                            msg.put("status",
+                                    application().toHumanDaemonStatus(FetchingDaemon.State.valueOf(getSettingManager().get(RouteTrafficModel.DAEMON_STATE))));
                             try {
                                 broadcastAnnouncer.sendMessage(12399,msg);
                             } catch (Exception e) {
@@ -181,10 +184,10 @@ public class FetchingDaemon extends Service {
 
     private void doFetch() {
         State newState = State.UNSPECIFIED;
-        FetchStatistic.FetchingStatus status = ((RouteTrafficApp) getApplication()).model().execute(FetchStatistic.class,null);
+        FetchStatistic.FetchingStatus status = application().model().execute(FetchStatistic.class,null);
         if (status != FetchStatistic.FetchingStatus.SUCCESS){
             newState = State.LAST_FAIL;
-            String msg = ((RouteTrafficApp) getApplication()).fetchStatusToString(status);
+            String msg = application().toHumanFetchStatus(status);
 
             Intent intent = new Intent(this, Dashboard.class);
             PendingIntent intent1 = PendingIntent.getActivity(this, 0, intent,
@@ -196,14 +199,14 @@ public class FetchingDaemon extends Service {
                     .setContentIntent(intent1)
                     .setSmallIcon(R.drawable.white_icon).build();
 
-            ((RouteTrafficApp) getApplication()).model().usingService(NotificationManager.class).notify(112,notification);
+            application().model().usingService(NotificationManager.class).notify(112,notification);
         } else {
-            ((RouteTrafficApp) getApplication()).model().usingService(NotificationManager.class).cancel(112);
+            application().model().usingService(NotificationManager.class).cancel(112);
             newState = State.LAST_SUCCESS;
         }
 
         getSettingManager().set(RouteTrafficModel.DAEMON_STATE, newState.name());
-        ((RouteTrafficApp)getApplication()).model()
+        application().model()
                 .usingService(EventMessenger.class).send(RouteTrafficModel.EVENT_DAEMON_LAST_STATE,newState);
     }
 

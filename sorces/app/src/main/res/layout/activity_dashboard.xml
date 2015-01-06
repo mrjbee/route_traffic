@@ -3,7 +3,7 @@
     android:layout_height="match_parent" 
     tools:context=".Dashboard"
     android:orientation="vertical"
-    android:background="@color/theme"
+    android:background="@color/theme_background"
     android:animateLayoutChanges="true">
     <ScrollView
         android:layout_width="fill_parent"
