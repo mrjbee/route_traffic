@@ -12,6 +12,8 @@ import org.monroe.team.android.box.manager.SettingManager;
 import org.monroe.team.android.box.support.ApplicationSupport;
 import org.monroe.team.android.box.utils.DateUtils;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Date;
 
 import team.monroe.org.routetraffic.uc.FetchStatistic;
@@ -34,7 +36,14 @@ public class RouteTrafficApp extends ApplicationSupport<RouteTrafficModel>{
         }
     };
 
-
+    private static NumberFormat byteCountFormatter = NumberFormat.getInstance();
+    private static NumberFormat byteCountFormatterShort = NumberFormat.getInstance();
+    static {
+        byteCountFormatter.setMaximumFractionDigits(3);
+        byteCountFormatter.setMinimumFractionDigits(0);
+        byteCountFormatterShort.setMinimumFractionDigits(0);
+        byteCountFormatterShort.setMaximumFractionDigits(0);
+    }
     @Override
     public void onCreate() {
         super.onCreate();
@@ -103,20 +112,21 @@ public class RouteTrafficApp extends ApplicationSupport<RouteTrafficModel>{
 
     public String toHumanBytes(Long bytes, boolean extended) {
         if (bytes < 0) return "NaN";
+
         StringBuilder builder = new StringBuilder();
-        long gB =  bytes/1073741824l;
-        long mB =  (bytes - gB * 1073741824l)/1048576l;
-        long kB =  (bytes - gB * 1073741824l - mB*1048576l)/1024;
 
-        if (gB > 0){
-            builder.append(gB).append(" GB ");
-        }
-        if (mB > 0){
-            builder.append(mB).append(" MB ");
-        }
+        double gB =  bytes/1073741824d;
+        double mB =  (bytes)/1048576d;
+        double kB =  (bytes)/1024;
 
-        if ((gB == 0 && extended) || mB < 1){
-                builder.append(kB).append(" KB ");
+        NumberFormat formatToUse = extended?byteCountFormatter:byteCountFormatterShort;
+
+        if (gB > 1 && !extended){
+            builder.append(byteCountFormatter.format(gB)).append(" GB ");
+        }else if (mB > 1){
+            builder.append(formatToUse.format(mB)).append(" MB ");
+        }else {
+            builder.append(formatToUse.format(kB)).append(" KB ");
         }
         return builder.toString().trim();
     }

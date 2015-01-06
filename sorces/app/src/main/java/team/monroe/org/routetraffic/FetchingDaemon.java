@@ -63,8 +63,8 @@ public class FetchingDaemon extends Service {
         String text = "Collecting data";
 
         if (out > 0 ){
-            text = "Sent:"+ application().toHumanBytes(in, false)+", " +
-                   "Received:"+ application().toHumanBytes(out, false);
+            text = "Sent "+ application().toHumanBytes(in, false)+" " +
+                   "Received "+ application().toHumanBytes(out, false);
         }
 
         Intent intent = new Intent(this, Dashboard.class);
