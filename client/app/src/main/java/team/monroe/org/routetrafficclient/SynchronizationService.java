@@ -53,11 +53,12 @@ public class SynchronizationService extends Service {
         }, app().time_ms_synchronization_time());
 
         android.support.v4.app.NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setSmallIcon(R.drawable.synch)
+        builder.setSmallIcon(R.drawable.syncronization)
                 .setContentTitle("Traffic synchronization")
                 .setContentText("Gathering traffic data")
                 .setSubText("This will take up to " + (app().time_ms_synchronization_time() / 1000) + " sec")
-                .setOngoing(true);
+                .setOngoing(true)
+                .setContentIntent(AppClient.gotoDashBoardActivity(this));
         startForeground(105, builder.build());
     }
 

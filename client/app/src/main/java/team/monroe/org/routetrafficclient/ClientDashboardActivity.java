@@ -11,7 +11,6 @@ import org.monroe.team.socks.broadcast.DefaultBroadcastReceiver;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 
-import team.monroe.org.routetrafficclient.uc.GetTrafficDetails;
 
 
 public class ClientDashboardActivity extends ActivitySupport<AppClient> {
@@ -19,14 +18,14 @@ public class ClientDashboardActivity extends ActivitySupport<AppClient> {
     private DefaultBroadcastReceiver receiver;
     private static NumberFormat byteCountFormatter = NumberFormat.getInstance();
     private static DateFormat dateFormat = DateFormat.getDateTimeInstance();
-    private Data.DataChangeObserver<GetTrafficDetails.TrafficDetails> trafficChangeListener = new Data.DataChangeObserver<GetTrafficDetails.TrafficDetails>() {
+    private Data.DataChangeObserver<AppClient.TrafficDetails> trafficChangeListener = new Data.DataChangeObserver<AppClient.TrafficDetails>() {
         @Override
         public void onDataInvalid() {
             ClientDashboardActivity.this.onInvalidTrafficDetails();
         }
 
         @Override
-        public void onData(GetTrafficDetails.TrafficDetails trafficDetails) {}
+        public void onData(AppClient.TrafficDetails trafficDetails) {}
     };
 
     private Data.DataChangeObserver<Boolean> activatedChangeListener= new Data.DataChangeObserver<Boolean>() {
@@ -54,7 +53,7 @@ public class ClientDashboardActivity extends ActivitySupport<AppClient> {
         });
     }
 
-    private void updateTrafficDetails(GetTrafficDetails.TrafficDetails trafficDetails) {
+    private void updateTrafficDetails(AppClient.TrafficDetails trafficDetails) {
         view_text(R.id.out_value).setText(toHumanBytes(trafficDetails.out));
         view_text(R.id.in_value).setText(toHumanBytes(trafficDetails.in));
         if (trafficDetails.synchronizationDate == null){
@@ -68,7 +67,7 @@ public class ClientDashboardActivity extends ActivitySupport<AppClient> {
         view_text(R.id.in_status_value).setText(asHumanString(trafficDetails.synchronizationState));
     }
 
-    private String asHumanString(GetTrafficDetails.TrafficDetails.SynchronizationState synchronizationState) {
+    private String asHumanString(AppClient.TrafficDetails.SynchronizationState synchronizationState) {
         switch (synchronizationState){
             case AWAITING:
                 return "In Progress";
@@ -118,9 +117,9 @@ public class ClientDashboardActivity extends ActivitySupport<AppClient> {
     }
 
     private void fetchTrafficDetails() {
-        application().data_traffic_details().fetch(true, new Data.FetchObserver<GetTrafficDetails.TrafficDetails>() {
+        application().data_traffic_details().fetch(true, new Data.FetchObserver<AppClient.TrafficDetails>() {
             @Override
-            public void onFetch(GetTrafficDetails.TrafficDetails trafficDetails) {
+            public void onFetch(AppClient.TrafficDetails trafficDetails) {
                 updateTrafficDetails(trafficDetails);
             }
 
@@ -159,29 +158,7 @@ public class ClientDashboardActivity extends ActivitySupport<AppClient> {
 
      */
 
-    /*
 
-    public String toHumanBytes(Long bytes, boolean extended) {
-        if (bytes < 0) return "NaN";
-
-        StringBuilder builder = new StringBuilder();
-
-        double gB =  bytes/1073741824d;
-        double mB =  (bytes)/1048576d;
-        double kB =  (bytes)/1024;
-
-        NumberFormat formatToUse = extended?byteCountFormatter:byteCountFormatterShort;
-
-        if (gB > 1 && !extended){
-            builder.append(byteCountFormatter.format(gB)).append(" GB ");
-        }else if (mB > 1){
-            builder.append(formatToUse.format(mB)).append(" MB ");
-        }else {
-            builder.append(formatToUse.format(kB)).append(" KB ");
-        }
-        return builder.toString().trim();
-    }
-     */
     public String toHumanBytes(Long bytes) {
         StringBuilder builder = new StringBuilder();
 

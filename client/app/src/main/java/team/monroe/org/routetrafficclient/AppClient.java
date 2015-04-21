@@ -1,6 +1,10 @@
 package team.monroe.org.routetrafficclient;
 
 import android.app.AlarmManager;
+import android.app.Application;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
@@ -8,14 +12,16 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.support.v4.app.NotificationCompat;
 
 import org.monroe.team.android.box.app.ApplicationSupport;
 import org.monroe.team.android.box.data.Data;
-import org.monroe.team.android.box.data.UcDataProvider;
 import org.monroe.team.android.box.services.SettingManager;
 import org.monroe.team.corebox.utils.DateUtils;
 
-import team.monroe.org.routetrafficclient.uc.GetTrafficDetails;
+import java.io.Serializable;
+import java.util.Date;
+
 
 public class AppClient extends ApplicationSupport<ModelClient> implements SynchronizationService.SynchronizationResultObserver{
 
@@ -27,7 +33,7 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
     public static final SettingManager.SettingItem<Long> SETTING_FIRST_SYNC_IN_SERIE = new SettingManager.SettingItem<>("last_sync_data",Long.class, -1l);
 
     private static AppClient instance;
-    private Data<GetTrafficDetails.TrafficDetails> trafficDetailsDataProvider;
+    private Data<TrafficDetails> trafficDetailsDataProvider;
     private Data<Boolean> activatedDataProvider;
     private ServiceConnection serviceConnection;
     private SynchronizationService.SynchronizationDaemon daemon;
@@ -44,17 +50,124 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
     @Override
     protected void onPostCreate() {
         instance = this;
-        trafficDetailsDataProvider = new UcDataProvider<GetTrafficDetails.TrafficDetails>(model(),this, GetTrafficDetails.TrafficDetails.class,GetTrafficDetails.class);
+        trafficDetailsDataProvider = new Data<TrafficDetails>(TrafficDetails.class, model()) {
+            @Override
+            protected TrafficDetails provideData() {
+                TrafficDetails answer = prepareTrafficDetails();
+                if (answer.synchronizationState == TrafficDetails.SynchronizationState.FAIL){
+                    suggestDeactivate();
+                }else{
+                    dismissDeactivationSuggestion();
+                }
+                return answer;
+            }
+        };
+
         activatedDataProvider = new Data<Boolean>(Boolean.class, model()) {
             @Override
             protected Boolean provideData() {
                 return model().usingService(SettingManager.class).get(SETTING_ACTIVATED);
             }
         };
+
         super.onPostCreate();
     }
 
-    public Data<GetTrafficDetails.TrafficDetails> data_traffic_details() {
+    private void dismissDeactivationSuggestion() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Application.NOTIFICATION_SERVICE);
+        notificationManager.cancel(201);
+    }
+
+
+    private void dismissActivationSuggestion() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Application.NOTIFICATION_SERVICE);
+        notificationManager.cancel(202);
+    }
+
+    private TrafficDetails prepareTrafficDetails() {
+
+        long in = model().usingService(SettingManager.class).get(AppClient.SETTING_IN);
+        long out = model().usingService(SettingManager.class).get(AppClient.SETTING_OUT);
+        long msLastSuccessSync = model().usingService(SettingManager.class).get(AppClient.SETTING_LAST_SUCCESS_SYNC_DATE);
+        long msFirstSync = model().usingService(SettingManager.class).get(AppClient.SETTING_FIRST_SYNC_IN_SERIE);
+
+        if (msFirstSync == -1){
+            TrafficDetails.SynchronizationState state = TrafficDetails.SynchronizationState.AWAITING;
+            if (!model().usingService(SettingManager.class).get(AppClient.SETTING_ACTIVATED)){
+                state = TrafficDetails.SynchronizationState.DISABLED;
+            }
+            return new TrafficDetails(out, in, null, state);
+        } else {
+
+            long msToUse = msFirstSync;
+
+            if (msLastSuccessSync != -1 && msLastSuccessSync > msFirstSync){
+                msToUse = msLastSuccessSync;
+            }
+
+            long fetch_delay = DateUtils.now().getTime() - msToUse;
+            long worry_time = AppClient.time_ms_worry();
+
+            TrafficDetails.SynchronizationState state = TrafficDetails.SynchronizationState.SUCCESS;
+
+            if (!model().usingService(SettingManager.class).get(AppClient.SETTING_ACTIVATED)){
+                state = TrafficDetails.SynchronizationState.DISABLED;
+            } else if (fetch_delay > worry_time){
+                state = TrafficDetails.SynchronizationState.FAIL;
+            }else if (msLastSuccessSync < msFirstSync){
+                state = TrafficDetails.SynchronizationState.AWAITING;
+            }
+            return new TrafficDetails(
+                    out, in,
+                    (msLastSuccessSync != -1)? new Date(msLastSuccessSync):null,
+                    state);
+        }
+    }
+
+    private void suggestDeactivate() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setContentTitle("Synchronization failed")
+                .setContentText("Traffic synchronization failed")
+                .setSmallIcon(R.drawable.syncronization)
+                .setContentIntent(gotoDashBoardActivity(this))
+                .addAction(R.drawable.stop, "Stop", NotificationActor.DEACTIVATE.createPendingIntent(this))
+                .addAction(R.drawable.remind, "Stop & Remind", NotificationActor.DEACTIVATE_AND_REMIND.createPendingIntent(this))
+                .setAutoCancel(true);
+
+        Notification notification = builder.build();
+        notification.defaults |= Notification.DEFAULT_SOUND;
+        notification.defaults |= Notification.DEFAULT_VIBRATE;
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Application.NOTIFICATION_SERVICE);
+        notificationManager.notify(201, notification);
+    }
+
+    public void suggestActivation() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setContentTitle("Synchronization disabled")
+                .setContentText("Do you want to enable synchronization ?")
+                .setSmallIcon(R.drawable.syncronization)
+                .setContentIntent(gotoDashBoardActivity(this))
+                .addAction(R.drawable.start, "Start", NotificationActor.ACTIVATE.createPendingIntent(this))
+                .addAction(R.drawable.remind, "Later", NotificationActor.REMIND_ACTIVATION.createPendingIntent(this))
+                .setAutoCancel(true);
+
+        Notification notification = builder.build();
+        notification.defaults |= Notification.DEFAULT_SOUND;
+        notification.defaults |= Notification.DEFAULT_VIBRATE;
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Application.NOTIFICATION_SERVICE);
+        notificationManager.notify(202, notification);
+    }
+
+    public static PendingIntent gotoDashBoardActivity(Context context) {
+        return PendingIntent.getActivity(
+                context,
+                0,
+                new Intent(context, ClientDashboardActivity.class), 0);
+    }
+
+    public Data<TrafficDetails> data_traffic_details() {
         return trafficDetailsDataProvider;
     }
 
@@ -64,6 +177,8 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
 
     public void updateActivationStatus(boolean activated) {
        boolean wasValue = model().usingService(SettingManager.class).get(SETTING_ACTIVATED);
+       dismissDeactivationSuggestion();
+       dismissActivationSuggestion();
        if (activated != wasValue){
            model().usingService(SettingManager.class).set(SETTING_ACTIVATED, activated);
            if (activated){
@@ -82,17 +197,28 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
     }
 
 
-
     private void cancelNextUpdate() {
         AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(AlarmActor.START_FETCHING.createPendingIntent(this));
+        alarmManager.cancel(AlarmActor.START_SYNCING.createPendingIntent(this));
     }
 
     private void scheduleNextUpdate(long delay) {
         AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + delay,
-                AlarmActor.START_FETCHING.createPendingIntent(this));
+                AlarmActor.START_SYNCING.createPendingIntent(this));
+    }
+
+    public void scheduleSuggestActivation(boolean longer) {
+        dismissActivationSuggestion();
+        AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime() + ((longer)?time_ms_synchronization_activation()*2 : time_ms_synchronization_activation()),
+                AlarmActor.ACTIVATION_SUGGESTION.createPendingIntent(this));
+    }
+
+    private long time_ms_synchronization_activation() {
+        return 5000;
     }
 
     public void startSynchronizationDaemon() {
@@ -148,5 +274,25 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
 
     public static long time_ms_worry() {
         return 30 * 1000;
+    }
+
+
+    public static class TrafficDetails implements Serializable {
+
+        public final long out;
+        public final long in;
+        public final Date synchronizationDate;
+        public final SynchronizationState synchronizationState;
+
+        public TrafficDetails(long out, long in, Date synchronizationDate, SynchronizationState synchronizationState) {
+            this.out = out;
+            this.in = in;
+            this.synchronizationDate = synchronizationDate;
+            this.synchronizationState = synchronizationState;
+        }
+
+        public static enum SynchronizationState {
+            SUCCESS, FAIL, AWAITING, DISABLED
+        }
     }
 }
