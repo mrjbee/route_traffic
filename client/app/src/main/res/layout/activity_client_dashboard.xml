@@ -1,0 +1,126 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ClientDashboardActivity"
+    style="@style/Panel.Main"
+    android:orientation="vertical"
+    >
+
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_margin="20dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_marginRight="10dp"
+        android:id="@+id/application_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_launcher"/>
+
+    <TextView
+        style="@style/Text.Panel.Main.Caption.Sub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Route Traffic"
+        android:id="@+id/application_caption"
+        android:layout_toRightOf="@+id/application_icon"
+        />
+
+    <TextView
+        android:layout_below="@+id/application_caption"
+        android:layout_alignLeft="@+id/application_caption"
+        style="@style/Text.Panel.Main.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Traffic Client"
+        android:id="@+id/application_type_caption" />
+
+    <CheckBox
+        android:button="@null"
+        android:background="@drawable/activated_check"
+        android:layout_width="52dp"
+        android:layout_height="30dp"
+        android:checked="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/out_caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Text.Panel.Main.Value.Caption"
+            android:text="Out"/>
+
+        <TextView
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/out_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Text.Panel.Main.Value.Big"
+            android:text="00.00 MB"/>
+
+        <TextView
+            android:id="@+id/in_caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Text.Panel.Main.Value.Caption"
+            android:text="In"/>
+
+        <TextView
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/in_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Text.Panel.Main.Value.Big"
+            android:text="00.00 MB"/>
+
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/in_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Text.Panel.Main.Value.Caption"
+                android:text="Last updated at"/>
+            <TextView
+                android:layout_marginLeft="5dp"
+                android:id="@+id/in_time_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Text.Panel.Main.Value"
+                android:text="Apr 21, 16:20"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/in_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Text.Panel.Main.Value.Caption"
+                android:text="Synchronization"/>
+            <TextView
+                android:layout_marginLeft="5dp"
+                android:id="@+id/in_status_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Text.Panel.Main.Value"
+                android:text="Successfully"/>
+        </LinearLayout>
+
+
+    </LinearLayout>
+</RelativeLayout>

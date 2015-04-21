@@ -1,0 +1,45 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="android:Theme.Holo.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:textColor">#FF0000</item>
+    </style>
+
+    <style name="Panel.Main" parent="AppTheme">
+        <item name="android:background">#ff1d1d1d</item>
+    </style>
+
+    <style name="Text.Panel.Main" parent="AppTheme">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#fff2f2f2</item>
+    </style>
+
+    <style name="Text.Panel.Main.Caption" parent="Text.Panel.Main">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#ffffbc06</item>
+    </style>
+
+    <style name="Text.Panel.Main.Caption.Sub" parent="Text.Panel.Main">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="Text.Panel.Main.Value" parent="Text.Panel.Main">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#ffffbc06</item>
+    </style>
+
+    <style name="Text.Panel.Main.Value.Big" parent="Text.Panel.Main">
+        <item name="android:textSize">30sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#ffffbc06</item>
+    </style>
+
+    <style name="Text.Panel.Main.Value.Caption" parent="Text.Panel.Main">
+        <item name="android:textColor">#ff989898</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
+</resources>
