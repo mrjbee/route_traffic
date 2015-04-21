@@ -38,6 +38,7 @@
         android:id="@+id/application_type_caption" />
 
     <CheckBox
+        android:id="@+id/activation_check"
         android:button="@null"
         android:background="@drawable/activated_check"
         android:layout_width="52dp"
@@ -81,10 +82,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/Text.Panel.Main.Value.Big"
-            android:text="00.00 MB"/>
+            android:text="00.00 MB"
+            android:layout_marginBottom="20dp"
+            />
 
         <LinearLayout
-            android:layout_marginTop="20dp"
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -93,7 +95,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/Text.Panel.Main.Value.Caption"
-                android:text="Last updated at"/>
+                android:text="Synchronized at"/>
             <TextView
                 android:layout_marginLeft="5dp"
                 android:id="@+id/in_time_value"
