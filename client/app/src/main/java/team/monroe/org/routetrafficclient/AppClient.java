@@ -20,6 +20,7 @@ import org.monroe.team.android.box.services.SettingManager;
 import org.monroe.team.corebox.utils.DateUtils;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 
@@ -73,8 +74,28 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
 
         super.onPostCreate();
         checkAndScheduleNextUpdate();
+        checkAndScheduleDayCounterDrop();
+    }
 
+    private void checkAndScheduleDayCounterDrop() {
+        PendingIntent newDayAlarmIntent = AlarmActor.NEW_DAY.checkPendingIntent(this);
+        if (newDayAlarmIntent == null){
+            AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
 
+            // Set the alarm to start at approximately 2:00 p.m.
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+
+            // With setInexactRepeating(), you have to use one of the AlarmManager interval
+            // constants--in this case, AlarmManager.INTERVAL_DAY.
+            alarmManager.setInexactRepeating(
+                    AlarmManager.RTC,
+                    calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY,
+                    AlarmActor.NEW_DAY.createPendingIntent(this));
+        }
     }
 
     private void checkAndScheduleNextUpdate() {
@@ -268,7 +289,6 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
 
     @Override
     public void onSyncResult(SynchronizationService.SynchronizationResult result) {
-
         model().usingService(SettingManager.class).set(SETTING_IN, result.in);
         model().usingService(SettingManager.class).set(SETTING_OUT, result.out);
         model().usingService(SettingManager.class).set(SETTING_LAST_SUCCESS_SYNC_DATE, DateUtils.now().getTime());
@@ -315,7 +335,18 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
     }
 
     public void onBootCompleted() {
+        checkAndScheduleDayCounterDrop();
         checkAndScheduleNextUpdate();
+    }
+
+    public void onNewDay() {
+        long successSyncDate = getSetting(SETTING_LAST_SUCCESS_SYNC_DATE);
+        if (successSyncDate != -1){
+            Date successDay = DateUtils.dateOnly(new Date(successSyncDate));
+            if (successDay.before(DateUtils.today())){
+                onSyncResult(new SynchronizationService.SynchronizationResult(0,0));
+            }
+        }
     }
 
 
