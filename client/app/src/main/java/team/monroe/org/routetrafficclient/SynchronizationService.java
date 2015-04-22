@@ -6,6 +6,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 
+import org.monroe.team.android.box.services.SettingManager;
+import org.monroe.team.corebox.utils.DateUtils;
 import org.monroe.team.socks.broadcast.BroadcastReceiver;
 import org.monroe.team.socks.broadcast.DefaultBroadcastReceiver;
 import org.monroe.team.socks.exception.ConnectionException;
@@ -60,6 +62,11 @@ public class SynchronizationService extends Service {
                 .setOngoing(true)
                 .setContentIntent(AppClient.gotoDashBoardActivity(this));
         startForeground(105, builder.build());
+
+        if (app().getSetting(AppClient.SETTING_FIRST_SYNC_IN_SERIE) == -1) {
+            app().setSetting(AppClient.SETTING_FIRST_SYNC_IN_SERIE, DateUtils.now().getTime());
+        }
+
         broadcastReceiver = new DefaultBroadcastReceiver(new BroadcastReceiver.BroadcastMessageObserver<Map<String, String>>() {
             @Override
             public void onMessage(Map<String, String> stringStringMap, InetAddress inetAddress) {

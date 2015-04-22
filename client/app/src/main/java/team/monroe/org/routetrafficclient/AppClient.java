@@ -297,10 +297,6 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
 
     @Override
     public void onSyncEnd() {
-        if (model().usingService(SettingManager.class).get(SETTING_FIRST_SYNC_IN_SERIE) == -1) {
-            model().usingService(SettingManager.class).set(SETTING_FIRST_SYNC_IN_SERIE, DateUtils.now().getTime());
-        }
-
         if (model().usingService(SettingManager.class).get(SETTING_ACTIVATED)) {
             scheduleNextUpdate(time_ms_synchronization_delay());
         }
