@@ -25,7 +25,7 @@ public class NotificationActor extends Actor {
             @Override
             protected void reactSilent(Intent intent) {
                 AppClient.getInstance().updateActivationStatus(false);
-                AppClient.getInstance().scheduleSuggestActivation();
+                AppClient.getInstance().scheduleSuggestActivation(false);
             }
         });
         reactOn(ACTIVATE, intent, new SilentReaction() {
@@ -37,7 +37,7 @@ public class NotificationActor extends Actor {
         reactOn(REMIND_ACTIVATION, intent, new SilentReaction() {
             @Override
             protected void reactSilent(Intent intent) {
-                AppClient.getInstance().scheduleSuggestActivation();
+                AppClient.getInstance().scheduleSuggestActivation(true);
             }
         });
     }

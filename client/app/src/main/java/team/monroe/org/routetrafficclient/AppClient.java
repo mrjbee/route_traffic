@@ -126,8 +126,8 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
 
     private void suggestDeactivate() {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setContentTitle("Synchronization failed")
-                .setContentText("Traffic synchronization failed")
+        builder.setContentTitle("Traffic synchronization")
+                .setContentText("Synchronization failed")
                 .setSmallIcon(R.drawable.syncronization)
                 .setContentIntent(gotoDashBoardActivity(this))
                 .addAction(R.drawable.stop, "Stop", NotificationActor.DEACTIVATE.createPendingIntent(this))
@@ -144,8 +144,9 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
 
     public void suggestActivation() {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setContentTitle("Synchronization disabled")
-                .setContentText("Do you want to enable synchronization ?")
+        builder.setContentTitle("Traffic synchronization")
+                .setContentText("Synchronization is disabled")
+                .setSubText("Do you want to enable synchronization ?")
                 .setSmallIcon(R.drawable.syncronization)
                 .setContentIntent(gotoDashBoardActivity(this))
                 .addAction(R.drawable.start, "Start", NotificationActor.ACTIVATE.createPendingIntent(this))
