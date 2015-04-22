@@ -159,7 +159,7 @@ public class ClientDashboardActivity extends ActivitySupport<AppClient> {
      */
 
 
-    public String toHumanBytes(Long bytes) {
+    public static String toHumanBytes(Long bytes) {
         StringBuilder builder = new StringBuilder();
 
         double gB =  bytes/1073741824d;

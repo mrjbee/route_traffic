@@ -16,6 +16,7 @@ import android.support.v4.app.NotificationCompat;
 
 import org.monroe.team.android.box.app.ApplicationSupport;
 import org.monroe.team.android.box.data.Data;
+import org.monroe.team.android.box.data.DataProvider;
 import org.monroe.team.android.box.services.SettingManager;
 import org.monroe.team.corebox.utils.DateUtils;
 
@@ -52,7 +53,7 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
     @Override
     protected void onPostCreate() {
         instance = this;
-        trafficDetailsDataProvider = new Data<TrafficDetails>(TrafficDetails.class, model()) {
+        trafficDetailsDataProvider = new DataProvider<TrafficDetails>(TrafficDetails.class, model(),this) {
             @Override
             protected TrafficDetails provideData() {
                 TrafficDetails answer = prepareTrafficDetails();
@@ -65,7 +66,7 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
             }
         };
 
-        activatedDataProvider = new Data<Boolean>(Boolean.class, model()) {
+        activatedDataProvider = new DataProvider<Boolean>(Boolean.class, model(), this) {
             @Override
             protected Boolean provideData() {
                 return model().usingService(SettingManager.class).get(SETTING_ACTIVATED);
@@ -343,6 +344,10 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
                 onSyncResult(new SynchronizationService.SynchronizationResult(0,0));
             }
         }
+    }
+
+    public void revertActivationStatus() {
+        updateActivationStatus(!getSetting(SETTING_ACTIVATED));
     }
 
 

@@ -43,8 +43,7 @@
 
     <ImageView
         android:id="@+id/activation_check"
-        android:button="@null"
-        android:background="@drawable/activated_on"
+        android:src="@drawable/activated_on"
         android:layout_width="52dp"
         android:layout_height="30dp"/>
 
