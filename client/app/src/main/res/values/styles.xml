@@ -10,6 +10,10 @@
         <item name="android:background">#ff1d1d1d</item>
     </style>
 
+    <style name="Panel.Widget.Main" parent="AppTheme">
+        <item name="android:background">@drawable/widget_background</item>
+    </style>
+
     <style name="Text.Panel.Main" parent="AppTheme">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">#fff2f2f2</item>

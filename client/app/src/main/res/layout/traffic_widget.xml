@@ -1,0 +1,51 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp"
+    style="@style/Panel.Widget.Main"
+    android:orientation="horizontal"
+    android:gravity="center">
+
+    <ImageView
+        android:layout_marginRight="10dp"
+        android:id="@+id/application_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_launcher"/>
+
+    <LinearLayout
+        android:layout_weight="2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_toRightOf="@id/application_icon"
+            android:id="@+id/traffic_caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Text.Panel.Main"
+            android:text="In/Out Traffic"/>
+
+        <TextView
+            android:id="@+id/traffic_value"
+            android:layout_below="@id/traffic_caption"
+            android:layout_alignLeft="@id/traffic_caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Text.Panel.Main.Value"
+            android:text="0 MB/0 MB"/>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/activation_check"
+        android:button="@null"
+        android:background="@drawable/activated_on"
+        android:layout_width="52dp"
+        android:layout_height="30dp"/>
+
+</LinearLayout>

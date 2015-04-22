@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="250dp"
+    android:minHeight="30dp"
+    android:updatePeriodMillis="0"
+    android:previewImage="@drawable/example_appwidget_preview"
+    android:initialLayout="@layout/traffic_widget"
+    android:widgetCategory="home_screen"
+    android:initialKeyguardLayout="@layout/traffic_widget"></appwidget-provider>
