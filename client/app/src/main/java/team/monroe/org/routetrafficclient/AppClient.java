@@ -20,6 +20,7 @@ import org.monroe.team.android.box.services.SettingManager;
 import org.monroe.team.corebox.utils.DateUtils;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Date;
 
 
@@ -71,6 +72,11 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
         };
 
         super.onPostCreate();
+
+        //Double check on create
+        if (getSetting(SETTING_ACTIVATED) && !isNextUpdateAlarmSet()){
+            scheduleNextUpdate(time_ms_synchronization_initial_delay());
+        }
     }
 
     private void dismissDeactivationSuggestion() {
@@ -199,8 +205,11 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
 
 
     private void cancelNextUpdate() {
+        PendingIntent pendingIntent = AlarmActor.START_SYNCING.checkPendingIntent(this, Collections.EMPTY_LIST);
+        if (pendingIntent == null) return;
         AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(AlarmActor.START_SYNCING.createPendingIntent(this));
+        alarmManager.cancel(pendingIntent);
+        pendingIntent.cancel();
     }
 
     private void scheduleNextUpdate(long delay) {
@@ -208,6 +217,11 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + delay,
                 AlarmActor.START_SYNCING.createPendingIntent(this));
+    }
+
+    private boolean isNextUpdateAlarmSet() {
+        PendingIntent intent = AlarmActor.START_SYNCING.checkPendingIntent(this, Collections.EMPTY_LIST);
+        return intent != null;
     }
 
     public void scheduleSuggestActivation(boolean longer) {
