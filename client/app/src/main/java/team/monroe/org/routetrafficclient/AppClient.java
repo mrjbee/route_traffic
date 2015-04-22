@@ -184,7 +184,7 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
            model().usingService(SettingManager.class).set(SETTING_ACTIVATED, activated);
            if (activated){
                model().usingService(SettingManager.class).set(SETTING_FIRST_SYNC_IN_SERIE,-1l);
-               scheduleNextUpdate(time_ms_synchronization_interval_initial());
+               scheduleNextUpdate(time_ms_synchronization_initial_delay());
            }else {
                cancelNextUpdate();
                if (daemon != null){
@@ -218,9 +218,7 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
                 AlarmActor.ACTIVATION_SUGGESTION.createPendingIntent(this));
     }
 
-    private long time_ms_synchronization_activation() {
-        return 5000;
-    }
+
 
     public void startSynchronizationDaemon() {
 
@@ -250,32 +248,54 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
     }
 
     @Override
-    public void onSyncResult(Object result) {
+    public void onSyncResult(SynchronizationService.SynchronizationResult result) {
+
+        model().usingService(SettingManager.class).set(SETTING_IN, result.in);
+        model().usingService(SettingManager.class).set(SETTING_OUT, result.out);
+        model().usingService(SettingManager.class).set(SETTING_LAST_SUCCESS_SYNC_DATE, DateUtils.now().getTime());
+        data_traffic_details().invalidate();
+    }
+
+    @Override
+    public void onSyncEnd() {
         if (model().usingService(SettingManager.class).get(SETTING_FIRST_SYNC_IN_SERIE) == -1) {
             model().usingService(SettingManager.class).set(SETTING_FIRST_SYNC_IN_SERIE, DateUtils.now().getTime());
         }
-        data_traffic_details().invalidate();
 
         if (model().usingService(SettingManager.class).get(SETTING_ACTIVATED)) {
-            scheduleNextUpdate(time_ms_synchronization_interval());
+            scheduleNextUpdate(time_ms_synchronization_delay());
         }
+
+        data_traffic_details().invalidate();
     }
 
-    public long time_ms_synchronization_time() {
-        return 10000;
+    //Time before suggest activation
+    private long time_ms_synchronization_activation() {
+        return DateUtils.msMinutes(30);
     }
 
-    private long time_ms_synchronization_interval_initial() {
-        return 2 * 1000;
+    //Duration of synchronization
+    public long time_ms_synchronization_duration() {
+        return DateUtils.msMinutes(5);
     }
 
-    private long time_ms_synchronization_interval() {
-        return 5 * 1000;
+    //Interval before first synchronization
+    private long time_ms_synchronization_initial_delay() {
+        return DateUtils.msSeconds(2);
     }
 
+    //Delay before next synchronization
+    private long time_ms_synchronization_delay() {
+        //each hour
+        return DateUtils.msHour(1);
+    }
+
+    //Time after synchronization would fail
     public static long time_ms_worry() {
-        return 30 * 1000;
+        return DateUtils.msHour(2);
     }
+
+
 
 
     public static class TrafficDetails implements Serializable {
