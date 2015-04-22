@@ -72,7 +72,12 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
         };
 
         super.onPostCreate();
+        checkAndScheduleNextUpdate();
 
+
+    }
+
+    private void checkAndScheduleNextUpdate() {
         //Double check on create
         if (getSetting(SETTING_ACTIVATED) && !isNextUpdateAlarmSet()){
             scheduleNextUpdate(time_ms_synchronization_initial_delay());
@@ -309,7 +314,9 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
         return DateUtils.msHour(2);
     }
 
-
+    public void onBootCompleted() {
+        checkAndScheduleNextUpdate();
+    }
 
 
     public static class TrafficDetails implements Serializable {
