@@ -41,6 +41,13 @@
 
     </LinearLayout>
 
+
+    <ImageView
+        android:id="@+id/synch_now_btn"
+        android:src="@drawable/syncronization"
+        android:layout_width="52dp"
+        android:layout_height="30dp"/>
+
     <ImageView
         android:id="@+id/activation_check"
         android:src="@drawable/activated_on"

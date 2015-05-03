@@ -65,6 +65,17 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
                 return answer;
             }
         };
+        trafficDetailsDataProvider.addDataChangeObserver(new Data.DataChangeObserver<TrafficDetails>() {
+            @Override
+            public void onDataInvalid() {
+                TrafficWidget.UPDATE_WIDGET.send(getApplicationContext());
+            }
+
+            @Override
+            public void onData(TrafficDetails trafficDetails) {
+
+            }
+        });
 
         activatedDataProvider = new DataProvider<Boolean>(Boolean.class, model(), this) {
             @Override
@@ -73,6 +84,17 @@ public class AppClient extends ApplicationSupport<ModelClient> implements Synchr
             }
         };
 
+        activatedDataProvider.addDataChangeObserver(new Data.DataChangeObserver<Boolean>() {
+            @Override
+            public void onDataInvalid() {
+                TrafficWidget.UPDATE_WIDGET.send(getApplicationContext());
+            }
+
+            @Override
+            public void onData(Boolean aBoolean) {
+
+            }
+        });
         super.onPostCreate();
         checkAndScheduleNextUpdate();
         checkAndScheduleDayCounterDrop();

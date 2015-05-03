@@ -9,6 +9,7 @@ import org.monroe.team.android.box.actor.ActorAction;
 public class WidgetActor extends Actor {
 
     public static final ActorAction CHANGE_ACTIVATION_STATUS = new ActorAction("change_activation",501,WidgetActor.class);
+    public static final ActorAction SYNC_NOW = new ActorAction("sync_now",502,WidgetActor.class);
 
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -16,6 +17,12 @@ public class WidgetActor extends Actor {
             @Override
             protected void reactSilent(Intent intent) {
                 AppClient.getInstance().revertActivationStatus();
+            }
+        });
+        reactOn(SYNC_NOW, intent, new SilentReaction(){
+            @Override
+            protected void reactSilent(Intent intent) {
+                AppClient.getInstance().startSynchronizationDaemon();
             }
         });
     }

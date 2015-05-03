@@ -51,12 +51,11 @@
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".TrafficWidget" >
+        <receiver android:name=".TrafficWidget"
+            android:enabled="true"
+            android:exported="false" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="org.monroe.team.android.box.event.INVALID_DATA"/>
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"

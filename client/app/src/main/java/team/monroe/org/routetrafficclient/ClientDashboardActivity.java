@@ -100,7 +100,7 @@ public class ClientDashboardActivity extends ActivitySupport<AppClient> {
 
             @Override
             public void onError(Data.FetchError fetchError) {
-                forceCloseWithErrorCode(203);
+                forceCloseWithErrorCode(new Data.FetchException(fetchError));
             }
         });
     }
@@ -125,7 +125,7 @@ public class ClientDashboardActivity extends ActivitySupport<AppClient> {
 
             @Override
             public void onError(Data.FetchError fetchError) {
-                forceCloseWithErrorCode(202);
+                new Data.FetchException(fetchError);
             }
         });
     }

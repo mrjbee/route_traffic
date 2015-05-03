@@ -6,11 +6,14 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.provider.CalendarContract;
 import android.widget.RemoteViews;
 
+import org.monroe.team.android.box.actor.ActorAction;
 import org.monroe.team.android.box.data.Data;
 import org.monroe.team.android.box.data.DataProvider;
 import org.monroe.team.android.box.event.Event;
+import org.monroe.team.android.box.event.GenericEvent;
 import org.monroe.team.corebox.utils.Closure;
 
 
@@ -18,6 +21,8 @@ import org.monroe.team.corebox.utils.Closure;
  * Implementation of App Widget functionality.
  */
 public class TrafficWidget extends AppWidgetProvider {
+
+    public static final ActorAction UPDATE_WIDGET = new ActorAction("update_widget", 909, TrafficWidget.class);
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -27,12 +32,10 @@ public class TrafficWidget extends AppWidgetProvider {
         fetchTraffic(context);
     }
 
-
-
     @Override
-    public void onReceive(final Context context, Intent intent) {
+    public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        if (intent.getAction().equals(DataProvider.INVALID_DATA.getAction())){
+        if (UPDATE_WIDGET.isMe(intent)){
             fetchActivationStatus(context);
             fetchTraffic(context);
         }
@@ -85,7 +88,7 @@ public class TrafficWidget extends AppWidgetProvider {
         });
     }
     @Override
-    public void onEnabled(Context context) {
+    public void onEnabled(final Context context) {
         // Enter relevant functionality for when the first widget is created
     }
 
@@ -107,6 +110,9 @@ public class TrafficWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.traffic_widget);
         views.setOnClickPendingIntent(R.id.activation_check, WidgetActor.CHANGE_ACTIVATION_STATUS.createPendingIntent(context));
         views.setOnClickPendingIntent(R.id.application_icon, AppClient.gotoDashBoardActivity(context));
+        views.setOnClickPendingIntent(R.id.synch_now_btn, WidgetActor.SYNC_NOW.createPendingIntent(context));
+
+        //synch_now_btn
         if (widgetUpdate != null){
             widgetUpdate.execute(views);
         }
